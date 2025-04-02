@@ -1,10 +1,10 @@
 [project]
 name = "aeonlib"
 version = "0.1.0"
-description = "Add your description here"
+description = "A suite of modules to enable TDA/MMA observations"
 readme = "README.md"
 authors = [
-    { name = "Austin Riba", email = "austin@m51.io" }
+    { name = "Austin Riba", email = "ariba@lco.global" }
 ]
 requires-python = ">=3.12"
 dependencies = []
