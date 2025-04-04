@@ -48,10 +48,11 @@ def generate_instrument_configs(ins_s: str) -> str:
                 "acquisition_modes": get_modes(ins, "acquisition"),
                 "guiding_modes": get_modes(ins, "guiding"),
                 "rotator_modes": get_modes(ins, "rotator"),
-                "optical_elements": [
-                    {type: [v["code"] for v in values]}
-                    for type, values in ins["optical_elements"].items()
-                ],
+                "optical_elements": {
+                    # This gets rid of the silly trailing s on "filters" and "narrowband_g_positions"
+                    k[:-1]: v
+                    for k, v in ins["optical_elements"].items()
+                },
             }
         )
 

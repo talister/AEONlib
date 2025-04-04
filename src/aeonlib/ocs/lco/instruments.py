@@ -1,4 +1,4 @@
-from typing import Any, Annotated, Literal, Union
+from typing import Any, Annotated, ClassVar, Literal, Union
 
 from annotated_types import Le
 from pydantic import BaseModel, ConfigDict
@@ -8,7 +8,7 @@ from pydantic.types import (
 )
 
 from aeonlib.ocs.target_models import Constraints, Target
-from aeonlib.ocs.config_models import Roi
+from aeonlib.ocs.config_models import Roi, OpticalElementsMixin
 
 
 class LcoSoarGhtsBluecamImagerGuidingConfig(BaseModel):
@@ -29,7 +29,7 @@ class LcoSoarGhtsBluecamImagerAcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class LcoSoarGhtsBluecamImagerConfig(BaseModel):
+class LcoSoarGhtsBluecamImagerConfig(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -40,7 +40,10 @@ class LcoSoarGhtsBluecamImagerConfig(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
-    filters: Literal["u-SDSS", "g-SDSS", "r-SDSS", "i-SDSS"]
+    filter: Literal["u-SDSS", "g-SDSS", "r-SDSS", "i-SDSS"]
+    optical_element_fields: ClassVar[list[str]] = ["filter"]
+
+
 
 
 class LcoSoarGhtsBluecamImager(BaseModel):
@@ -77,7 +80,7 @@ class Lco1M0NresScicamAcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class Lco1M0NresScicamConfig(BaseModel):
+class Lco1M0NresScicamConfig(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -87,6 +90,9 @@ class Lco1M0NresScicamConfig(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
+    optical_element_fields: ClassVar[list[str]] = []
+
+
 
 
 class Lco1M0NresScicam(BaseModel):
@@ -123,7 +129,7 @@ class Lco2M0FloydsScicamAcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class Lco2M0FloydsScicamConfig(BaseModel):
+class Lco2M0FloydsScicamConfig(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -134,7 +140,10 @@ class Lco2M0FloydsScicamConfig(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
-    slits: Literal["slit_6.0as", "slit_1.6as", "slit_2.0as", "slit_1.2as"]
+    slit: Literal["slit_6.0as", "slit_1.6as", "slit_2.0as", "slit_1.2as"]
+    optical_element_fields: ClassVar[list[str]] = ["slit"]
+
+
 
 
 class Lco2M0FloydsScicam(BaseModel):
@@ -171,7 +180,7 @@ class Lco2M0ScicamMuscatAcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class Lco2M0ScicamMuscatConfig(BaseModel):
+class Lco2M0ScicamMuscatConfig(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -181,10 +190,13 @@ class Lco2M0ScicamMuscatConfig(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
-    narrowband_g_positions: Literal["out", "in"]
-    narrowband_r_positions: Literal["out", "in"]
-    narrowband_i_positions: Literal["out", "in"]
-    narrowband_z_positions: Literal["out", "in"]
+    narrowband_g_position: Literal["out", "in"]
+    narrowband_r_position: Literal["out", "in"]
+    narrowband_i_position: Literal["out", "in"]
+    narrowband_z_position: Literal["out", "in"]
+    optical_element_fields: ClassVar[list[str]] = ["narrowband_g_position", "narrowband_r_position", "narrowband_i_position", "narrowband_z_position"]
+
+
 
 
 class Lco2M0ScicamMuscat(BaseModel):
@@ -221,7 +233,7 @@ class LcoSoarGhtsRedcamAcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class LcoSoarGhtsRedcamConfig(BaseModel):
+class LcoSoarGhtsRedcamConfig(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -232,6 +244,9 @@ class LcoSoarGhtsRedcamConfig(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
+    optical_element_fields: ClassVar[list[str]] = []
+
+
 
 
 class LcoSoarGhtsRedcam(BaseModel):
@@ -268,7 +283,7 @@ class LcoSoarGhtsRedcamImagerAcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class LcoSoarGhtsRedcamImagerConfig(BaseModel):
+class LcoSoarGhtsRedcamImagerConfig(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -279,7 +294,10 @@ class LcoSoarGhtsRedcamImagerConfig(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
-    filters: Literal["g-SDSS", "r-SDSS", "i-SDSS", "z-SDSS"]
+    filter: Literal["g-SDSS", "r-SDSS", "i-SDSS", "z-SDSS"]
+    optical_element_fields: ClassVar[list[str]] = ["filter"]
+
+
 
 
 class LcoSoarGhtsRedcamImager(BaseModel):
@@ -316,7 +334,7 @@ class LcoSoarTriplespecAcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class LcoSoarTriplespecConfig(BaseModel):
+class LcoSoarTriplespecConfig(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -327,6 +345,9 @@ class LcoSoarTriplespecConfig(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
+    optical_element_fields: ClassVar[list[str]] = []
+
+
 
 
 class LcoSoarTriplespec(BaseModel):
@@ -363,7 +384,7 @@ class LcoSoarGhtsBluecamAcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class LcoSoarGhtsBluecamConfig(BaseModel):
+class LcoSoarGhtsBluecamConfig(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -374,6 +395,9 @@ class LcoSoarGhtsBluecamConfig(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
+    optical_element_fields: ClassVar[list[str]] = []
+
+
 
 
 class LcoSoarGhtsBluecam(BaseModel):
@@ -410,7 +434,7 @@ class Lco1M0ScicamSinistroAcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class Lco1M0ScicamSinistroConfig(BaseModel):
+class Lco1M0ScicamSinistroConfig(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -420,7 +444,10 @@ class Lco1M0ScicamSinistroConfig(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
-    filters: Literal["I", "R", "U", "w", "Y", "up", "rp", "ip", "gp", "zs", "V", "B", "400um-Pinhole", "150um-Pinhole", "CN"]
+    filter: Literal["I", "R", "U", "w", "Y", "up", "rp", "ip", "gp", "zs", "V", "B", "400um-Pinhole", "150um-Pinhole", "CN"]
+    optical_element_fields: ClassVar[list[str]] = ["filter"]
+
+
 
 
 class Lco1M0ScicamSinistro(BaseModel):
@@ -457,7 +484,7 @@ class Lco0M4ScicamQhy600AcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class Lco0M4ScicamQhy600Config(BaseModel):
+class Lco0M4ScicamQhy600Config(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -467,7 +494,10 @@ class Lco0M4ScicamQhy600Config(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
-    filters: Literal["OIII", "SII", "Astrodon-Exo", "w", "opaque", "up", "rp", "ip", "gp", "zs", "V", "B", "H-Alpha"]
+    filter: Literal["OIII", "SII", "Astrodon-Exo", "w", "opaque", "up", "rp", "ip", "gp", "zs", "V", "B", "H-Alpha"]
+    optical_element_fields: ClassVar[list[str]] = ["filter"]
+
+
 
 
 class Lco0M4ScicamQhy600(BaseModel):
@@ -504,7 +534,7 @@ class LcoBlancoNewfirmAcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class LcoBlancoNewfirmConfig(BaseModel):
+class LcoBlancoNewfirmConfig(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -514,7 +544,10 @@ class LcoBlancoNewfirmConfig(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
-    filters: Literal["JX", "HX", "KXs", "1187", "2096", "1644", "2124", "2168", "J1", "1066", "DARK"]
+    filter: Literal["JX", "HX", "KXs", "1187", "2096", "1644", "2124", "2168", "J1", "1066", "DARK"]
+    optical_element_fields: ClassVar[list[str]] = ["filter"]
+
+
 
 
 class LcoBlancoNewfirm(BaseModel):

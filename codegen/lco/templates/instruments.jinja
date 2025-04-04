@@ -1,4 +1,4 @@
-from typing import Any, Annotated, Literal, Union
+from typing import Any, Annotated, ClassVar, Literal, Union
 
 from annotated_types import Le
 from pydantic import BaseModel, ConfigDict
@@ -8,7 +8,7 @@ from pydantic.types import (
 )
 
 from aeonlib.ocs.target_models import Constraints, Target
-from aeonlib.ocs.config_models import Roi
+from aeonlib.ocs.config_models import Roi, OpticalElementsMixin
 
 
 {% for ctx in instruments %}
@@ -30,7 +30,7 @@ class {{ ctx.class_name }}AcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class {{ ctx.class_name }}Config(BaseModel):
+class {{ ctx.class_name }}Config(OpticalElementsMixin, BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -43,11 +43,12 @@ class {{ ctx.class_name }}Config(BaseModel):
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
-    {% for element in ctx.optical_elements %}
-        {% for key, values in element.items() %}
-    {{ key }}: Literal[{% for v in values %}"{{ v }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-        {% endfor %}
+    {% for key, values in ctx.optical_elements.items() %}
+    {{ key }}: Literal[{% for v in values %}"{{ v['code'] }}"{% if not loop.last %}, {% endif %}{% endfor %}]
     {% endfor %}
+    optical_element_fields: ClassVar[list[str]] = [{% for key in ctx.optical_elements.keys() %}"{{ key }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+
+
 
 
 class {{ ctx.class_name }}(BaseModel):

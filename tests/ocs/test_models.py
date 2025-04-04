@@ -31,7 +31,7 @@ def request_group() -> RequestGroup:
                                 exposure_count=1,
                                 exposure_time=10,
                                 mode="central_2k_2x2",
-                                filters="R",
+                                filter="R",
                             )
                         ],
                     )
