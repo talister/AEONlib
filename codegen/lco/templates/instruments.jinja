@@ -1,0 +1,53 @@
+from typing import Any, Literal, Union
+
+from pydantic import BaseModel, ConfigDict
+from pydantic.types import (
+    NonNegativeInt,
+    PositiveInt,
+)
+
+from aeonlib.ocs.target_models import Constraints, Target
+from aeonlib.ocs.config_models import AcquisitionConfig, GuidingConfig, Roi
+
+
+{% for ctx in instruments %}
+class {{ ctx.class_name }}Config(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    exposure_count: PositiveInt
+    """The number of exposures to take. This field must be set to a value greater than 0"""
+    exposure_time: NonNegativeInt
+    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    mode: Literal[{% for m in ctx.readout_modes %}"{{ m }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+    {% if ctx.type == "SPECTRA" %}
+    rotator_mode: Literal["VFLOAT"]
+    {% endif %}
+    rois: list[Roi] | None = None
+    extra_params: dict[Any, Any] = {}
+    """This is completely generated at runtime via configdb stuff"""
+    {% for element in ctx.optical_elements %}
+        {% for key, values in element.items() %}
+    {{ key }}: Literal[{% for v in values %}"{{ v }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+        {% endfor %}
+    {% endfor %}
+
+
+class {{ ctx.class_name }}(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    type: Literal[{% for t in ctx.config_types %}"{{ t }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+    instrument_type: str = "{{ ctx.instrument_type }}"
+    repeat_duration: NonNegativeInt = 0
+    instrument_configs: list[{{ ctx.class_name }}Config] = []
+    target: Target
+    constraints: Constraints
+    # TODO: These should be instrument specific
+    guiding_config: GuidingConfig | None = None
+    acquisition_config: AcquisitionConfig | None = None
+{% endfor %}
+
+
+# Export a list of all instrument classes
+LCO_INSTRUMENTS = Union[
+{% for ctx in instruments %}
+    {{ ctx.class_name }},
+{% endfor %}
+]

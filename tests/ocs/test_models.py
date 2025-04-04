@@ -3,16 +3,14 @@ from datetime import datetime, timedelta
 import pytest
 from pydantic import ValidationError
 
+from aeonlib.ocs.lco.instruments import Lco1M0ScicamSinistro, Lco1M0ScicamSinistroConfig
 from aeonlib.ocs.request_models import (
-    Configuration,
-    Constraints,
-    InstrumentConfig,
     Location,
     Request,
     RequestGroup,
-    Target,
     Window,
 )
+from aeonlib.ocs.target_models import Constraints, Target
 
 
 @pytest.fixture
@@ -28,16 +26,18 @@ def request_group() -> RequestGroup:
             Request(
                 location=Location(telescope_class="1m0"),
                 configurations=[
-                    Configuration(
+                    Lco1M0ScicamSinistro(
+                        type="EXPOSE",
+                        target=Target(name="M51", type="ICRS"),
                         constraints=Constraints(),
                         instrument_configs=[
-                            InstrumentConfig(
-                                exposure_time=10, exposure_count=1, mode="NORMAL"
+                            Lco1M0ScicamSinistroConfig(
+                                exposure_count=1,
+                                exposure_time=10,
+                                mode="central_2k_2x2",
+                                filters="R",
                             )
                         ],
-                        target=Target(name="M51", type="ICRS"),
-                        instrument_type="SciCam1",
-                        type="EXPOSE",
                     )
                 ],
                 windows=[
