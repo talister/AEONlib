@@ -3,14 +3,8 @@ from datetime import datetime, timedelta
 import pytest
 from pydantic import ValidationError
 
+from aeonlib.ocs import Constraints, Location, Request, RequestGroup, Target, Window
 from aeonlib.ocs.lco.instruments import Lco1M0ScicamSinistro
-from aeonlib.ocs.request_models import (
-    Location,
-    Request,
-    RequestGroup,
-    Window,
-)
-from aeonlib.ocs.target_models import Constraints, Target
 
 
 @pytest.fixture
