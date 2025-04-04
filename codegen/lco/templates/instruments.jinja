@@ -61,6 +61,10 @@ class {{ ctx.class_name }}(BaseModel):
     guiding_config: {{ ctx.class_name }}GuidingConfig | None = None
     acquisition_config: {{ ctx.class_name }}AcquisitionConfig | None = None
 
+    config_class = {{ ctx.class_name }}Config
+    guiding_config_class = {{ ctx.class_name }}GuidingConfig
+    acquisition_config_class = {{ ctx.class_name }}AcquisitionConfig
+
 
 {% endfor %}
 # Export a type that encompasses all instruments

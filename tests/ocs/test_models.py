@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import pytest
 from pydantic import ValidationError
 
-from aeonlib.ocs.lco.instruments import Lco1M0ScicamSinistro, Lco1M0ScicamSinistroConfig
+from aeonlib.ocs.lco.instruments import Lco1M0ScicamSinistro
 from aeonlib.ocs.request_models import (
     Location,
     Request,
@@ -16,6 +16,8 @@ from aeonlib.ocs.target_models import Constraints, Target
 @pytest.fixture
 def request_group() -> RequestGroup:
     """The simplest possible request group to edit or build from."""
+    instrument = Lco1M0ScicamSinistro
+
     return RequestGroup(
         name="test",
         observation_type="NORMAL",
@@ -26,12 +28,12 @@ def request_group() -> RequestGroup:
             Request(
                 location=Location(telescope_class="1m0"),
                 configurations=[
-                    Lco1M0ScicamSinistro(
+                    instrument(
                         type="EXPOSE",
                         target=Target(name="M51", type="ICRS"),
                         constraints=Constraints(),
                         instrument_configs=[
-                            Lco1M0ScicamSinistroConfig(
+                            instrument.config_class(
                                 exposure_count=1,
                                 exposure_time=10,
                                 mode="central_2k_2x2",

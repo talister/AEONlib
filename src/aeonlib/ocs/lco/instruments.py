@@ -54,6 +54,10 @@ class LcoSoarGhtsBluecamImager(BaseModel):
     guiding_config: LcoSoarGhtsBluecamImagerGuidingConfig | None = None
     acquisition_config: LcoSoarGhtsBluecamImagerAcquisitionConfig | None = None
 
+    config_class = LcoSoarGhtsBluecamImagerConfig
+    guiding_config_class = LcoSoarGhtsBluecamImagerGuidingConfig
+    acquisition_config_class = LcoSoarGhtsBluecamImagerAcquisitionConfig
+
 
 class Lco1M0NresScicamGuidingConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
@@ -95,6 +99,10 @@ class Lco1M0NresScicam(BaseModel):
     constraints: Constraints
     guiding_config: Lco1M0NresScicamGuidingConfig | None = None
     acquisition_config: Lco1M0NresScicamAcquisitionConfig | None = None
+
+    config_class = Lco1M0NresScicamConfig
+    guiding_config_class = Lco1M0NresScicamGuidingConfig
+    acquisition_config_class = Lco1M0NresScicamAcquisitionConfig
 
 
 class Lco2M0FloydsScicamGuidingConfig(BaseModel):
@@ -139,6 +147,10 @@ class Lco2M0FloydsScicam(BaseModel):
     constraints: Constraints
     guiding_config: Lco2M0FloydsScicamGuidingConfig | None = None
     acquisition_config: Lco2M0FloydsScicamAcquisitionConfig | None = None
+
+    config_class = Lco2M0FloydsScicamConfig
+    guiding_config_class = Lco2M0FloydsScicamGuidingConfig
+    acquisition_config_class = Lco2M0FloydsScicamAcquisitionConfig
 
 
 class Lco2M0ScicamMuscatGuidingConfig(BaseModel):
@@ -186,6 +198,10 @@ class Lco2M0ScicamMuscat(BaseModel):
     guiding_config: Lco2M0ScicamMuscatGuidingConfig | None = None
     acquisition_config: Lco2M0ScicamMuscatAcquisitionConfig | None = None
 
+    config_class = Lco2M0ScicamMuscatConfig
+    guiding_config_class = Lco2M0ScicamMuscatGuidingConfig
+    acquisition_config_class = Lco2M0ScicamMuscatAcquisitionConfig
+
 
 class LcoSoarGhtsRedcamGuidingConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
@@ -228,6 +244,10 @@ class LcoSoarGhtsRedcam(BaseModel):
     constraints: Constraints
     guiding_config: LcoSoarGhtsRedcamGuidingConfig | None = None
     acquisition_config: LcoSoarGhtsRedcamAcquisitionConfig | None = None
+
+    config_class = LcoSoarGhtsRedcamConfig
+    guiding_config_class = LcoSoarGhtsRedcamGuidingConfig
+    acquisition_config_class = LcoSoarGhtsRedcamAcquisitionConfig
 
 
 class LcoSoarGhtsRedcamImagerGuidingConfig(BaseModel):
@@ -273,6 +293,10 @@ class LcoSoarGhtsRedcamImager(BaseModel):
     guiding_config: LcoSoarGhtsRedcamImagerGuidingConfig | None = None
     acquisition_config: LcoSoarGhtsRedcamImagerAcquisitionConfig | None = None
 
+    config_class = LcoSoarGhtsRedcamImagerConfig
+    guiding_config_class = LcoSoarGhtsRedcamImagerGuidingConfig
+    acquisition_config_class = LcoSoarGhtsRedcamImagerAcquisitionConfig
+
 
 class LcoSoarTriplespecGuidingConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
@@ -315,6 +339,10 @@ class LcoSoarTriplespec(BaseModel):
     constraints: Constraints
     guiding_config: LcoSoarTriplespecGuidingConfig | None = None
     acquisition_config: LcoSoarTriplespecAcquisitionConfig | None = None
+
+    config_class = LcoSoarTriplespecConfig
+    guiding_config_class = LcoSoarTriplespecGuidingConfig
+    acquisition_config_class = LcoSoarTriplespecAcquisitionConfig
 
 
 class LcoSoarGhtsBluecamGuidingConfig(BaseModel):
@@ -359,6 +387,10 @@ class LcoSoarGhtsBluecam(BaseModel):
     guiding_config: LcoSoarGhtsBluecamGuidingConfig | None = None
     acquisition_config: LcoSoarGhtsBluecamAcquisitionConfig | None = None
 
+    config_class = LcoSoarGhtsBluecamConfig
+    guiding_config_class = LcoSoarGhtsBluecamGuidingConfig
+    acquisition_config_class = LcoSoarGhtsBluecamAcquisitionConfig
+
 
 class Lco1M0ScicamSinistroGuidingConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
@@ -401,6 +433,10 @@ class Lco1M0ScicamSinistro(BaseModel):
     constraints: Constraints
     guiding_config: Lco1M0ScicamSinistroGuidingConfig | None = None
     acquisition_config: Lco1M0ScicamSinistroAcquisitionConfig | None = None
+
+    config_class = Lco1M0ScicamSinistroConfig
+    guiding_config_class = Lco1M0ScicamSinistroGuidingConfig
+    acquisition_config_class = Lco1M0ScicamSinistroAcquisitionConfig
 
 
 class Lco0M4ScicamQhy600GuidingConfig(BaseModel):
@@ -445,6 +481,10 @@ class Lco0M4ScicamQhy600(BaseModel):
     guiding_config: Lco0M4ScicamQhy600GuidingConfig | None = None
     acquisition_config: Lco0M4ScicamQhy600AcquisitionConfig | None = None
 
+    config_class = Lco0M4ScicamQhy600Config
+    guiding_config_class = Lco0M4ScicamQhy600GuidingConfig
+    acquisition_config_class = Lco0M4ScicamQhy600AcquisitionConfig
+
 
 class LcoBlancoNewfirmGuidingConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
@@ -487,6 +527,10 @@ class LcoBlancoNewfirm(BaseModel):
     constraints: Constraints
     guiding_config: LcoBlancoNewfirmGuidingConfig | None = None
     acquisition_config: LcoBlancoNewfirmAcquisitionConfig | None = None
+
+    config_class = LcoBlancoNewfirmConfig
+    guiding_config_class = LcoBlancoNewfirmGuidingConfig
+    acquisition_config_class = LcoBlancoNewfirmAcquisitionConfig
 
 
 # Export a type that encompasses all instruments
