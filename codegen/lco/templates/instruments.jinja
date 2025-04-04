@@ -1,5 +1,6 @@
-from typing import Any, Literal, Union
+from typing import Any, Annotated, Literal, Union
 
+from annotated_types import Le
 from pydantic import BaseModel, ConfigDict
 from pydantic.types import (
     NonNegativeInt,
@@ -7,19 +8,37 @@ from pydantic.types import (
 )
 
 from aeonlib.ocs.target_models import Constraints, Target
-from aeonlib.ocs.config_models import AcquisitionConfig, GuidingConfig, Roi
+from aeonlib.ocs.config_models import Roi
 
 
 {% for ctx in instruments %}
+class {{ ctx.class_name }}GuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal[{% for m in ctx.guiding_modes %}"{{ m }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class {{ ctx.class_name }}AcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal[{% for m in ctx.acquisition_modes %}"{{ m }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
 class {{ ctx.class_name }}Config(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal[{% for m in ctx.readout_modes %}"{{ m }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-    {% if ctx.type == "SPECTRA" %}
-    rotator_mode: Literal["VFLOAT"]
+    {% if ctx.rotator_modes %}
+    rotator_mode: Literal[{% for m in ctx.rotator_modes %}"{{ m }}"{% if not loop.last %}, {% endif %}{% endfor %}]
     {% endif %}
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
@@ -39,13 +58,12 @@ class {{ ctx.class_name }}(BaseModel):
     instrument_configs: list[{{ ctx.class_name }}Config] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: {{ ctx.class_name }}GuidingConfig | None = None
+    acquisition_config: {{ ctx.class_name }}AcquisitionConfig | None = None
+
+
 {% endfor %}
-
-
-# Export a list of all instrument classes
+# Export a type that encompasses all instruments
 LCO_INSTRUMENTS = Union[
 {% for ctx in instruments %}
     {{ ctx.class_name }},

@@ -8,6 +8,13 @@ from jinja2 import Environment, FileSystemLoader
 from textcase import case, convert
 
 
+def get_modes(ins: dict, type: str) -> list[str]:
+    try:
+        return [m["code"] for m in ins["modes"][type]["modes"]]
+    except Exception:
+        return []
+
+
 def generate_instrument_configs(ins_s: str) -> str:
     """
     Generate instrument models based on the output of the OCS
@@ -29,23 +36,22 @@ def generate_instrument_configs(ins_s: str) -> str:
     template = j_env.get_template("instruments.jinja")
     ins_data = json.loads(ins_s)
     instruments = []
-    for code, ins in ins_data.items():
-        config_types = [c["code"] for _, c in ins["configuration_types"].items()]
-        readout_modes = [m["code"] for m in ins["modes"]["readout"]["modes"]]
-        optical_elements = [
-            {type: [v["code"] for v in values]}
-            for type, values in ins["optical_elements"].items()
-        ]
-        # The Lco prefix is necessary because some instruments start with a number
-        class_name = "Lco" + convert(code, case.PASCAL)
+    for instrument_type, ins in ins_data.items():
         instruments.append(
             {
-                "type": ins["type"],
-                "instrument_type": code,
-                "class_name": class_name,
-                "config_types": config_types,
-                "readout_modes": readout_modes,
-                "optical_elements": optical_elements,
+                "instrument_type": instrument_type,
+                "class_name": "Lco" + convert(instrument_type, case.PASCAL),
+                "config_types": [
+                    c["code"] for c in ins["configuration_types"].values()
+                ],
+                "readout_modes": get_modes(ins, "readout"),
+                "acquisition_modes": get_modes(ins, "acquisition"),
+                "guiding_modes": get_modes(ins, "guiding"),
+                "rotator_modes": get_modes(ins, "rotator"),
+                "optical_elements": [
+                    {type: [v["code"] for v in values]}
+                    for type, values in ins["optical_elements"].items()
+                ],
             }
         )
 

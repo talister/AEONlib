@@ -1,5 +1,6 @@
-from typing import Any, Literal, Union
+from typing import Any, Annotated, Literal, Union
 
+from annotated_types import Le
 from pydantic import BaseModel, ConfigDict
 from pydantic.types import (
     NonNegativeInt,
@@ -7,7 +8,25 @@ from pydantic.types import (
 )
 
 from aeonlib.ocs.target_models import Constraints, Target
-from aeonlib.ocs.config_models import AcquisitionConfig, GuidingConfig, Roi
+from aeonlib.ocs.config_models import Roi
+
+
+class LcoSoarGhtsBluecamImagerGuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["OFF", "ON"]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class LcoSoarGhtsBluecamImagerAcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["MANUAL"]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
 
 
 class LcoSoarGhtsBluecamImagerConfig(BaseModel):
@@ -15,8 +34,9 @@ class LcoSoarGhtsBluecamImagerConfig(BaseModel):
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal["GHTS_B_Image_2x2"]
+    rotator_mode: Literal["SKY"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
@@ -31,17 +51,35 @@ class LcoSoarGhtsBluecamImager(BaseModel):
     instrument_configs: list[LcoSoarGhtsBluecamImagerConfig] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: LcoSoarGhtsBluecamImagerGuidingConfig | None = None
+    acquisition_config: LcoSoarGhtsBluecamImagerAcquisitionConfig | None = None
+
+
+class Lco1M0NresScicamGuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["ON"]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class Lco1M0NresScicamAcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["WCS", "BRIGHTEST"]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
 class Lco1M0NresScicamConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal["default"]
-    rotator_mode: Literal["VFLOAT"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
@@ -55,17 +93,36 @@ class Lco1M0NresScicam(BaseModel):
     instrument_configs: list[Lco1M0NresScicamConfig] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: Lco1M0NresScicamGuidingConfig | None = None
+    acquisition_config: Lco1M0NresScicamAcquisitionConfig | None = None
+
+
+class Lco2M0FloydsScicamGuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["OFF", "ON"]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class Lco2M0FloydsScicamAcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["BRIGHTEST", "WCS"]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
 class Lco2M0FloydsScicamConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal["default"]
-    rotator_mode: Literal["VFLOAT"]
+    rotator_mode: Literal["VFLOAT", "SKY"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
@@ -80,15 +137,34 @@ class Lco2M0FloydsScicam(BaseModel):
     instrument_configs: list[Lco2M0FloydsScicamConfig] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: Lco2M0FloydsScicamGuidingConfig | None = None
+    acquisition_config: Lco2M0FloydsScicamAcquisitionConfig | None = None
+
+
+class Lco2M0ScicamMuscatGuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["ON", "OFF"]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class Lco2M0ScicamMuscatAcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["OFF"]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
 class Lco2M0ScicamMuscatConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal["MUSCAT_SLOW", "MUSCAT_FAST"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
@@ -107,17 +183,36 @@ class Lco2M0ScicamMuscat(BaseModel):
     instrument_configs: list[Lco2M0ScicamMuscatConfig] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: Lco2M0ScicamMuscatGuidingConfig | None = None
+    acquisition_config: Lco2M0ScicamMuscatAcquisitionConfig | None = None
+
+
+class LcoSoarGhtsRedcamGuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["ON"]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class LcoSoarGhtsRedcamAcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["MANUAL"]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
 class LcoSoarGhtsRedcamConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal["GHTS_R_1200_CaNIR_6300A_1x2_slit0p8", "GHTS_R_400m1_2x2", "GHTS_R_400m2_2x2", "GHTS_R_1200_CaNIR_1x2_slit0p8", "GHTS_R_2100_5000A_1x2_slit1p0", "GHTS_R_2100_6507A_1x2_slit0p45"]
-    rotator_mode: Literal["VFLOAT"]
+    rotator_mode: Literal["SKY"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
@@ -131,16 +226,36 @@ class LcoSoarGhtsRedcam(BaseModel):
     instrument_configs: list[LcoSoarGhtsRedcamConfig] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: LcoSoarGhtsRedcamGuidingConfig | None = None
+    acquisition_config: LcoSoarGhtsRedcamAcquisitionConfig | None = None
+
+
+class LcoSoarGhtsRedcamImagerGuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["OFF", "ON"]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class LcoSoarGhtsRedcamImagerAcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["MANUAL"]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
 class LcoSoarGhtsRedcamImagerConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal["GHTS_R_Image_2x2"]
+    rotator_mode: Literal["SKY"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
@@ -155,17 +270,36 @@ class LcoSoarGhtsRedcamImager(BaseModel):
     instrument_configs: list[LcoSoarGhtsRedcamImagerConfig] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: LcoSoarGhtsRedcamImagerGuidingConfig | None = None
+    acquisition_config: LcoSoarGhtsRedcamImagerAcquisitionConfig | None = None
+
+
+class LcoSoarTriplespecGuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["ON"]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class LcoSoarTriplespecAcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["MANUAL"]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
 class LcoSoarTriplespecConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal["fowler1_coadds2", "fowler4_coadds1", "fowler8_coadds1", "fowler16_coadds1", "fowler1_coadds1"]
-    rotator_mode: Literal["VFLOAT"]
+    rotator_mode: Literal["SKY"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
@@ -179,17 +313,36 @@ class LcoSoarTriplespec(BaseModel):
     instrument_configs: list[LcoSoarTriplespecConfig] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: LcoSoarTriplespecGuidingConfig | None = None
+    acquisition_config: LcoSoarTriplespecAcquisitionConfig | None = None
+
+
+class LcoSoarGhtsBluecamGuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["ON"]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class LcoSoarGhtsBluecamAcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["MANUAL"]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
 class LcoSoarGhtsBluecamConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal["GHTS_B_400m1_2x2"]
-    rotator_mode: Literal["VFLOAT"]
+    rotator_mode: Literal["SKY"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     """This is completely generated at runtime via configdb stuff"""
@@ -203,15 +356,34 @@ class LcoSoarGhtsBluecam(BaseModel):
     instrument_configs: list[LcoSoarGhtsBluecamConfig] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: LcoSoarGhtsBluecamGuidingConfig | None = None
+    acquisition_config: LcoSoarGhtsBluecamAcquisitionConfig | None = None
+
+
+class Lco1M0ScicamSinistroGuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["OFF", "ON"]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class Lco1M0ScicamSinistroAcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["OFF"]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
 class Lco1M0ScicamSinistroConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal["full_frame", "central_2k_2x2"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
@@ -227,15 +399,34 @@ class Lco1M0ScicamSinistro(BaseModel):
     instrument_configs: list[Lco1M0ScicamSinistroConfig] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: Lco1M0ScicamSinistroGuidingConfig | None = None
+    acquisition_config: Lco1M0ScicamSinistroAcquisitionConfig | None = None
+
+
+class Lco0M4ScicamQhy600GuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["OFF", "ON"]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class Lco0M4ScicamQhy600AcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["OFF"]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
 class Lco0M4ScicamQhy600Config(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal["central30x30", "full_frame"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
@@ -251,15 +442,34 @@ class Lco0M4ScicamQhy600(BaseModel):
     instrument_configs: list[Lco0M4ScicamQhy600Config] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: Lco0M4ScicamQhy600GuidingConfig | None = None
+    acquisition_config: Lco0M4ScicamQhy600AcquisitionConfig | None = None
+
+
+class LcoBlancoNewfirmGuidingConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["ON"]
+    optional: bool
+    """Whether the guiding is optional or not"""
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    """Guiding exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
+class LcoBlancoNewfirmAcquisitionConfig(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    mode: Literal["MANUAL"]
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    """Acquisition exposure time"""
+    extra_params: dict[Any, Any] = {}
+
+
 class LcoBlancoNewfirmConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
-    """ Exposure time in seconds (TODO: can this really be 0?)"""
+    """ Exposure time in seconds"""
     mode: Literal["fowler1_coadds1", "fowler8_coadds1", "fowler16_coadds1"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
@@ -275,12 +485,11 @@ class LcoBlancoNewfirm(BaseModel):
     instrument_configs: list[LcoBlancoNewfirmConfig] = []
     target: Target
     constraints: Constraints
-    # TODO: These should be instrument specific
-    guiding_config: GuidingConfig | None = None
-    acquisition_config: AcquisitionConfig | None = None
+    guiding_config: LcoBlancoNewfirmGuidingConfig | None = None
+    acquisition_config: LcoBlancoNewfirmAcquisitionConfig | None = None
 
 
-# Export a list of all instrument classes
+# Export a type that encompasses all instruments
 LCO_INSTRUMENTS = Union[
     LcoSoarGhtsBluecamImager,
     Lco1M0NresScicam,
