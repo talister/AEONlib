@@ -1,0 +1,23 @@
+[project]
+name = "aeonlib"
+version = "0.1.0"
+description = "A suite of modules to enable TDA/MMA observations"
+readme = "README.md"
+authors = [{ name = "Austin Riba", email = "ariba@lco.global" }]
+requires-python = ">=3.12"
+dependencies = ["pydantic>=2.11.1"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+codegen = [
+    "jinja2>=3.1.6",
+    "textcase>=0.2.1",
+]
+
+dev = ["pytest>=8.3.5"]
+
+[tool.pytest.ini_options]
+addopts = ["--import-mode=importlib"]
