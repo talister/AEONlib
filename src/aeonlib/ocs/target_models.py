@@ -17,7 +17,7 @@ class Target(BaseModel):
     """The type of this Target"""
     hour_angle: float | None = None
     """Hour angle of this Target"""
-    ra: Annotated[int, NonNegativeFloat, Le(360.0)] | None = None
+    ra: Annotated[float, NonNegativeFloat, Le(360.0)] | None = None
     """Right ascension in decimal degrees"""
     dec: Annotated[float, Ge(-90), Le(90)] | None = None
     """Declination in decimal degrees"""
