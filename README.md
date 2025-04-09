@@ -14,6 +14,15 @@ This project uses [pytest](https://docs.pytest.org/) to run tests:
 pytest
 ```
 
+Some tests are marked as `online`. These tests make real http requests in order
+to test interfaces with various services. To run them:
+
+```shell
+pytest -m online
+```
+
+CI does not run tests marked as online.
+
 ### Linting
 All code is formatted via [ruff](https://astral.sh/ruff).
 

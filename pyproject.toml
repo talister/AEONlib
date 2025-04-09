@@ -20,4 +20,7 @@ codegen = [
 dev = ["pytest>=8.3.5"]
 
 [tool.pytest.ini_options]
-addopts = ["--import-mode=importlib"]
+addopts = ["--import-mode=importlib",  "-m not online"]
+markers = [
+    "online: Marks tests that run online, for example, validating schemas"
+]
