@@ -1,5 +1,5 @@
 from .request_models import Location, Request, RequestGroup, Window
-from .target_models import Constraints, Target
+from .target_models import Constraints, NonSiderealTarget, SiderealTarget
 
 __all__ = [
     "Location",
@@ -7,5 +7,6 @@ __all__ = [
     "RequestGroup",
     "Window",
     "Constraints",
-    "Target",
+    "SiderealTarget",
+    "NonSiderealTarget",
 ]

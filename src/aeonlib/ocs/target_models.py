@@ -9,17 +9,17 @@ from pydantic.types import (
 )
 
 
-class Target(BaseModel):
+class SiderealTarget(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     name: Annotated[str, StringConstraints(max_length=50)] = "string"
     """The name of this Target"""
-    type: Literal["ICRS", "ORBITAL_ELEMENTS", "HOUR_ANGLE", "SATELLITE"]
+    type: Literal["ICRS", "HOUR_ANGLE"]
     """The type of this Target"""
     hour_angle: float | None = None
     """Hour angle of this Target"""
-    ra: Annotated[float, NonNegativeFloat, Le(360.0)] | None = None
+    ra: Annotated[float, NonNegativeFloat, Le(360.0)]
     """Right ascension in decimal degrees"""
-    dec: Annotated[float, Ge(-90), Le(90)] | None = None
+    dec: Annotated[float, Ge(-90), Le(90)]
     """Declination in decimal degrees"""
     altitude: Annotated[float, NonNegativeFloat, Le(90)] | None = None
     """Altitude of this Target"""
@@ -32,7 +32,6 @@ class Target(BaseModel):
     epoch: Annotated[int, Le(2100)] = 2000
     """Epoch in Modified Julian Days (MJD). Defaults to 2000."""
     parallax: Annotated[int, Le(2000)] = 0
-    """Parallax of the Target ±0.45 mas, max 2000. Defaults to 0."""
     diff_altitude_rate: int | None = None
     """Differential altitude rate (arcsec/s)"""
     diff_azimuth_rate: int | None = None
@@ -43,38 +42,45 @@ class Target(BaseModel):
     """Differential altitude acceleration (arcsec/s^2)"""
     diff_azimuth_acceleration: int | None = None
     """Differential azimuth acceleration (arcsec/s^2)"""
-    scheme: (
-        Literal[
-            "ASA_MAJOR_PLANET",
-            "ASA_MINOR_PLANET",
-            "ASA_COMET",
-            "JPL_MAJOR_PLANET",
-            "JPL_MINOR_PLANET",
-            "MPC_MINOR_PLANET",
-            "MPC_COMET",
-        ]
-        | None
-    ) = None
+    dailymot: float | None = None
+    """Daily motion (angle in degrees)"""
+
+
+class NonSiderealTarget(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    name: Annotated[str, StringConstraints(max_length=50)] = "string"
+    """Parallax of the Target ±0.45 mas, max 2000. Defaults to 0."""
+    type: Literal["ORBITAL_ELEMENTS", "HOUR_ANGLE", "SATELLITE"]
+    """The type of this Target TODO: Where does HOUR_ANGLE make sense?"""
+    scheme: Literal[
+        "ASA_MAJOR_PLANET",
+        "ASA_MINOR_PLANET",
+        "ASA_COMET",
+        "JPL_MAJOR_PLANET",
+        "JPL_MINOR_PLANET",
+        "MPC_MINOR_PLANET",
+        "MPC_COMET",
+    ]
     """The Target scheme to use"""
-    epochofel: Annotated[int, Ge(10_000), Le(100_000)] | None = None
+    epochofel: Annotated[int, Ge(10_000), Le(100_000)]
     """The epoch of the orbital elements (MJD)"""
-    orbinc: Annotated[int, NonNegativeFloat, Le(180.0)] | None = None
+    orbinc: Annotated[int, NonNegativeFloat, Le(180.0)]
     """Orbital inclination (angle in degrees)"""
-    longascnode: Annotated[int, NonNegativeFloat, Le(360.0)] | None = None
+    longascnode: Annotated[int, NonNegativeFloat, Le(360.0)]
     """Longitude of ascending node (angle in degrees)"""
     longofperih: Annotated[int, NonNegativeFloat, Le(360.0)] | None = None
     """Longitude of perihelion (angle in degrees)"""
-    argofperih: Annotated[int, NonNegativeFloat, Le(360.0)] | None = None
+    argofperih: Annotated[int, NonNegativeFloat, Le(360.0)]
     """Argument of perihelion (angle in degrees)"""
-    meandist: float | None = None
+    meandist: float
     """Mean distance (AU)"""
     perihdist: float | None = None
     """Perihelion distance (AU)"""
-    eccentricity: NonNegativeFloat | None = None
+    eccentricity: NonNegativeFloat
     """Eccentricity of the orbit"""
     meanlong: float | None = None
     """Mean longitude (angle in degrees)"""
-    meananom: Annotated[float, NonNegativeFloat, Le(360.0)] | None = None
+    meananom: Annotated[float, NonNegativeFloat, Le(360.0)]
     """Mean anomaly (angle in degrees)"""
     dailymot: float | None = None
     """Daily motion (angle in degrees)"""

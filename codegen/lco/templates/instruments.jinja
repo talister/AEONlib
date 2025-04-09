@@ -7,7 +7,7 @@ from pydantic.types import (
     PositiveInt,
 )
 
-from aeonlib.ocs.target_models import Constraints, Target
+from aeonlib.ocs.target_models import Constraints, SiderealTarget, NonSiderealTarget
 from aeonlib.ocs.config_models import Roi, OpticalElementsMixin
 
 
@@ -60,7 +60,7 @@ class {{ ctx.class_name }}(BaseModel):
     instrument_configs: list[{{ ctx.class_name }}Config] = []
     acquisition_config: {{ ctx.class_name }}AcquisitionConfig
     guiding_config: {{ ctx.class_name }}GuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = {{ ctx.class_name }}Config

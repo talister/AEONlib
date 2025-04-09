@@ -3,7 +3,14 @@ from datetime import datetime, timedelta
 import pytest
 from pydantic import ValidationError
 
-from aeonlib.ocs import Constraints, Location, Request, RequestGroup, Target, Window
+from aeonlib.ocs import (
+    Constraints,
+    Location,
+    Request,
+    RequestGroup,
+    SiderealTarget,
+    Window,
+)
 from aeonlib.ocs.lco.instruments import Lco1M0ScicamSinistro
 
 
@@ -25,7 +32,9 @@ def request_group() -> RequestGroup:
                 configurations=[
                     instrument(
                         type="EXPOSE",
-                        target=Target(name="M51", type="ICRS"),
+                        target=SiderealTarget(
+                            name="M51", type="ICRS", ra=202.469, dec=47.195
+                        ),
                         constraints=Constraints(),
                         instrument_configs=[
                             instrument.config_class(

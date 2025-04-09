@@ -7,7 +7,7 @@ from pydantic.types import (
     PositiveInt,
 )
 
-from aeonlib.ocs.target_models import Constraints, Target
+from aeonlib.ocs.target_models import Constraints, SiderealTarget, NonSiderealTarget
 from aeonlib.ocs.config_models import Roi, OpticalElementsMixin
 
 
@@ -54,7 +54,7 @@ class Lco0M4ScicamQhy600(BaseModel):
     instrument_configs: list[Lco0M4ScicamQhy600Config] = []
     acquisition_config: Lco0M4ScicamQhy600AcquisitionConfig
     guiding_config: Lco0M4ScicamQhy600GuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = Lco0M4ScicamQhy600Config
@@ -104,7 +104,7 @@ class Lco1M0NresScicam(BaseModel):
     instrument_configs: list[Lco1M0NresScicamConfig] = []
     acquisition_config: Lco1M0NresScicamAcquisitionConfig
     guiding_config: Lco1M0NresScicamGuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = Lco1M0NresScicamConfig
@@ -155,7 +155,7 @@ class Lco1M0ScicamSinistro(BaseModel):
     instrument_configs: list[Lco1M0ScicamSinistroConfig] = []
     acquisition_config: Lco1M0ScicamSinistroAcquisitionConfig
     guiding_config: Lco1M0ScicamSinistroGuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = Lco1M0ScicamSinistroConfig
@@ -207,7 +207,7 @@ class Lco2M0FloydsScicam(BaseModel):
     instrument_configs: list[Lco2M0FloydsScicamConfig] = []
     acquisition_config: Lco2M0FloydsScicamAcquisitionConfig
     guiding_config: Lco2M0FloydsScicamGuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = Lco2M0FloydsScicamConfig
@@ -261,7 +261,7 @@ class Lco2M0ScicamMuscat(BaseModel):
     instrument_configs: list[Lco2M0ScicamMuscatConfig] = []
     acquisition_config: Lco2M0ScicamMuscatAcquisitionConfig
     guiding_config: Lco2M0ScicamMuscatGuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = Lco2M0ScicamMuscatConfig
@@ -312,7 +312,7 @@ class LcoBlancoNewfirm(BaseModel):
     instrument_configs: list[LcoBlancoNewfirmConfig] = []
     acquisition_config: LcoBlancoNewfirmAcquisitionConfig
     guiding_config: LcoBlancoNewfirmGuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = LcoBlancoNewfirmConfig
@@ -363,7 +363,7 @@ class LcoSoarGhtsBluecam(BaseModel):
     instrument_configs: list[LcoSoarGhtsBluecamConfig] = []
     acquisition_config: LcoSoarGhtsBluecamAcquisitionConfig
     guiding_config: LcoSoarGhtsBluecamGuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = LcoSoarGhtsBluecamConfig
@@ -415,7 +415,7 @@ class LcoSoarGhtsBluecamImager(BaseModel):
     instrument_configs: list[LcoSoarGhtsBluecamImagerConfig] = []
     acquisition_config: LcoSoarGhtsBluecamImagerAcquisitionConfig
     guiding_config: LcoSoarGhtsBluecamImagerGuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = LcoSoarGhtsBluecamImagerConfig
@@ -466,7 +466,7 @@ class LcoSoarGhtsRedcam(BaseModel):
     instrument_configs: list[LcoSoarGhtsRedcamConfig] = []
     acquisition_config: LcoSoarGhtsRedcamAcquisitionConfig
     guiding_config: LcoSoarGhtsRedcamGuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = LcoSoarGhtsRedcamConfig
@@ -518,7 +518,7 @@ class LcoSoarGhtsRedcamImager(BaseModel):
     instrument_configs: list[LcoSoarGhtsRedcamImagerConfig] = []
     acquisition_config: LcoSoarGhtsRedcamImagerAcquisitionConfig
     guiding_config: LcoSoarGhtsRedcamImagerGuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = LcoSoarGhtsRedcamImagerConfig
@@ -569,7 +569,7 @@ class LcoSoarTriplespec(BaseModel):
     instrument_configs: list[LcoSoarTriplespecConfig] = []
     acquisition_config: LcoSoarTriplespecAcquisitionConfig
     guiding_config: LcoSoarTriplespecGuidingConfig
-    target: Target
+    target: SiderealTarget | NonSiderealTarget
     constraints: Constraints
 
     config_class = LcoSoarTriplespecConfig

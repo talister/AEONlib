@@ -1,6 +1,13 @@
 from datetime import datetime, timedelta
 
-from aeonlib.ocs import Constraints, Location, Request, RequestGroup, Target, Window
+from aeonlib.ocs import (
+    Constraints,
+    Location,
+    Request,
+    RequestGroup,
+    SiderealTarget,
+    Window,
+)
 from aeonlib.ocs.lco.instruments import (
     Lco1M0ScicamSinistro,
     Lco2M0FloydsScicam,
@@ -20,7 +27,9 @@ lco_1m0_scicam_sinistro = RequestGroup(
             configurations=[
                 Lco1M0ScicamSinistro(
                     type="EXPOSE",
-                    target=Target(name="M51", type="ICRS", ra=202.469, dec=47.195),
+                    target=SiderealTarget(
+                        name="M51", type="ICRS", ra=202.469, dec=47.195
+                    ),
                     constraints=Constraints(),
                     instrument_configs=[
                         Lco1M0ScicamSinistro.config_class(
@@ -61,7 +70,9 @@ lco_2m0_floyds_scicam = RequestGroup(
             configurations=[
                 Lco2M0FloydsScicam(
                     type="SPECTRUM",
-                    target=Target(name="M51", type="ICRS", ra=202.469, dec=47.195),
+                    target=SiderealTarget(
+                        name="M51", type="ICRS", ra=202.469, dec=47.195
+                    ),
                     constraints=Constraints(),
                     instrument_configs=[
                         Lco2M0FloydsScicam.config_class(
@@ -103,7 +114,9 @@ lco_2m0_scicam_muscat = RequestGroup(
             configurations=[
                 Lco2M0ScicamMuscat(
                     type="EXPOSE",
-                    target=Target(name="M51", type="ICRS", ra=202.469, dec=47.195),
+                    target=SiderealTarget(
+                        name="M51", type="ICRS", ra=202.469, dec=47.195
+                    ),
                     constraints=Constraints(),
                     instrument_configs=[
                         Lco2M0ScicamMuscat.config_class(
