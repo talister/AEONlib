@@ -17,7 +17,7 @@ class {{ ctx.class_name }}GuidingConfig(BaseModel):
     mode: Literal[{% for m in ctx.guiding_modes %}"{{ m }}"{% if not loop.last %}, {% endif %}{% endfor %}]
     optional: bool
     """Whether the guiding is optional or not"""
-    exposure_time: Annotated[int, NonNegativeInt, Le(120)] = 120
+    exposure_time: Annotated[int, NonNegativeInt, Le(120)] | None = None
     """Guiding exposure time"""
     extra_params: dict[Any, Any] = {}
 
@@ -25,7 +25,7 @@ class {{ ctx.class_name }}GuidingConfig(BaseModel):
 class {{ ctx.class_name }}AcquisitionConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     mode: Literal[{% for m in ctx.acquisition_modes %}"{{ m }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-    exposure_time: Annotated[int, NonNegativeInt, Le(60)] = 60
+    exposure_time: Annotated[int, NonNegativeInt, Le(60)] | None = None
     """Acquisition exposure time"""
     extra_params: dict[Any, Any] = {}
 
@@ -55,12 +55,13 @@ class {{ ctx.class_name }}(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal[{% for t in ctx.config_types %}"{{ t }}"{% if not loop.last %}, {% endif %}{% endfor %}]
     instrument_type: str = "{{ ctx.instrument_type }}"
-    repeat_duration: NonNegativeInt = 0
+    repeat_duration: NonNegativeInt | None = None
+    extra_params: dict[Any, Any] = {}
     instrument_configs: list[{{ ctx.class_name }}Config] = []
+    acquisition_config: {{ ctx.class_name }}AcquisitionConfig
+    guiding_config: {{ ctx.class_name }}GuidingConfig
     target: Target
     constraints: Constraints
-    guiding_config: {{ ctx.class_name }}GuidingConfig | None = None
-    acquisition_config: {{ ctx.class_name }}AcquisitionConfig | None = None
 
     config_class = {{ ctx.class_name }}Config
     guiding_config_class = {{ ctx.class_name }}GuidingConfig

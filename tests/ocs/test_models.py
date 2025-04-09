@@ -17,6 +17,7 @@ def request_group() -> RequestGroup:
         observation_type="NORMAL",
         operator="SINGLE",
         proposal="test",
+        submitter_id="bob",
         ipp_value=1.0,
         requests=[
             Request(
@@ -34,6 +35,12 @@ def request_group() -> RequestGroup:
                                 filter="R",
                             )
                         ],
+                        acquisition_config=instrument.acquisition_config_class(
+                            mode="OFF"
+                        ),
+                        guiding_config=instrument.guiding_config_class(
+                            mode="ON", optional=True
+                        ),
                     )
                 ],
                 windows=[

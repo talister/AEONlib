@@ -62,12 +62,12 @@ class Request(BaseModel):
     This is useful for nodding back and forth between a set of Targets that are too
     far apart to use Dithering.
     """
-    optimization_type: Literal["TIME", "AIRMASS"] | None = None
+    optimization_type: Literal["TIME", "AIRMASS"] = "TIME"
     """
     Optimization to use when scheduling. TIME favors placing requests earlier in their
     window. AIRMASS favors placing requests at lower airmass (higher altitude).
     """
-    observation_note: Annotated[str, StringConstraints(max_length=255)] = ""
+    observation_note: Annotated[str, StringConstraints(max_length=255)] | None = None
     """Text describing this Request"""
     extra_params: dict[Any, Any] = {}
     configurations: list[LCO_INSTRUMENTS]
@@ -82,6 +82,12 @@ class RequestGroup(BaseModel):
     """
 
     model_config = ConfigDict(validate_assignment=True)
+    name: Annotated[str, StringConstraints(max_length=50)]
+    """
+    Descriptive name for this RequestGroup. This string will be placed in the
+    FITS header as the GROUPID keyword value for all FITS frames originating from this
+    RequestGroup.
+    """
     proposal: str
     """The proposal ID awarded time"""
     ipp_value: NonNegativeFloat
@@ -102,11 +108,5 @@ class RequestGroup(BaseModel):
     Requests submitted with TIME_CRITICAL are scheduled normally but with a high priority.
     These modes are only available if the Proposal was granted special time.
     """
-    submitter_id: str = ""
-    name: Annotated[str, StringConstraints(max_length=50)]
-    """
-    Descriptive name for this RequestGroup. This string will be placed in the
-    FITS header as the GROUPID keyword value for all FITS frames originating from this
-    RequestGroup.
-    """
+    submitter_id: str
     requests: list[Request] = []

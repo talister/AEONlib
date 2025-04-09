@@ -36,7 +36,9 @@ def generate_instrument_configs(ins_s: str) -> str:
     template = j_env.get_template("instruments.jinja")
     ins_data = json.loads(ins_s)
     instruments = []
-    for instrument_type, ins in ins_data.items():
+    # Instruments endpoint seems inconsistent, this should keep our output consistent
+    ordered = dict(sorted(ins_data.items()))
+    for instrument_type, ins in ordered.items():
         instruments.append(
             {
                 "instrument_type": instrument_type,
