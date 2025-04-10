@@ -11,6 +11,7 @@ from pydantic.types import (
 )
 
 from aeonlib.ocs.lco.instruments import LCO_INSTRUMENTS
+from aeonlib.types import Time
 
 
 class Location(BaseModel):
@@ -30,9 +31,8 @@ class Window(BaseModel):
     """Request level window configuration"""
 
     model_config = ConfigDict(validate_assignment=True)
-    start: datetime | None = None
-    end: datetime
-    """The time when this observing Window ends"""
+    start: Time | datetime | None = None
+    end: Time | datetime
 
 
 class Cadence(BaseModel):
