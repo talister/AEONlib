@@ -48,7 +48,7 @@ class Lco0M4ScicamQhy600Config(OpticalElementsMixin, BaseModel):
 class Lco0M4ScicamQhy600(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal["EXPOSE", "REPEAT_EXPOSE", "AUTO_FOCUS", "BIAS", "DARK", "STANDARD", "SKY_FLAT"]
-    instrument_type: str = "0M4-SCICAM-QHY600"
+    instrument_type: Literal["0M4-SCICAM-QHY600"] = "0M4-SCICAM-QHY600"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[Lco0M4ScicamQhy600Config] = []
@@ -98,7 +98,7 @@ class Lco1M0NresScicamConfig(OpticalElementsMixin, BaseModel):
 class Lco1M0NresScicam(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal["NRES_SPECTRUM", "REPEAT_NRES_SPECTRUM", "NRES_EXPOSE", "NRES_TEST", "SCRIPT", "ENGINEERING", "ARC", "LAMP_FLAT", "NRES_BIAS", "NRES_DARK", "AUTO_FOCUS"]
-    instrument_type: str = "1M0-NRES-SCICAM"
+    instrument_type: Literal["1M0-NRES-SCICAM"] = "1M0-NRES-SCICAM"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[Lco1M0NresScicamConfig] = []
@@ -149,7 +149,7 @@ class Lco1M0ScicamSinistroConfig(OpticalElementsMixin, BaseModel):
 class Lco1M0ScicamSinistro(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal["EXPOSE", "REPEAT_EXPOSE", "BIAS", "DARK", "STANDARD", "SCRIPT", "AUTO_FOCUS", "ENGINEERING", "SKY_FLAT"]
-    instrument_type: str = "1M0-SCICAM-SINISTRO"
+    instrument_type: Literal["1M0-SCICAM-SINISTRO"] = "1M0-SCICAM-SINISTRO"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[Lco1M0ScicamSinistroConfig] = []
@@ -201,7 +201,7 @@ class Lco2M0FloydsScicamConfig(OpticalElementsMixin, BaseModel):
 class Lco2M0FloydsScicam(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal["SPECTRUM", "REPEAT_SPECTRUM", "ARC", "ENGINEERING", "SCRIPT", "LAMP_FLAT"]
-    instrument_type: str = "2M0-FLOYDS-SCICAM"
+    instrument_type: Literal["2M0-FLOYDS-SCICAM"] = "2M0-FLOYDS-SCICAM"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[Lco2M0FloydsScicamConfig] = []
@@ -255,7 +255,7 @@ class Lco2M0ScicamMuscatConfig(OpticalElementsMixin, BaseModel):
 class Lco2M0ScicamMuscat(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal["EXPOSE", "REPEAT_EXPOSE", "BIAS", "DARK", "STANDARD", "SCRIPT", "AUTO_FOCUS", "ENGINEERING", "SKY_FLAT"]
-    instrument_type: str = "2M0-SCICAM-MUSCAT"
+    instrument_type: Literal["2M0-SCICAM-MUSCAT"] = "2M0-SCICAM-MUSCAT"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[Lco2M0ScicamMuscatConfig] = []
@@ -306,7 +306,7 @@ class LcoBlancoNewfirmConfig(OpticalElementsMixin, BaseModel):
 class LcoBlancoNewfirm(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal["EXPOSE", "SKY_FLAT", "STANDARD", "DARK"]
-    instrument_type: str = "BLANCO_NEWFIRM"
+    instrument_type: Literal["BLANCO_NEWFIRM"] = "BLANCO_NEWFIRM"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[LcoBlancoNewfirmConfig] = []
@@ -357,7 +357,7 @@ class LcoSoarGhtsBluecamConfig(OpticalElementsMixin, BaseModel):
 class LcoSoarGhtsBluecam(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal["SPECTRUM", "ENGINEERING", "SCRIPT", "LAMP_FLAT", "ARC"]
-    instrument_type: str = "SOAR_GHTS_BLUECAM"
+    instrument_type: Literal["SOAR_GHTS_BLUECAM"] = "SOAR_GHTS_BLUECAM"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[LcoSoarGhtsBluecamConfig] = []
@@ -409,7 +409,7 @@ class LcoSoarGhtsBluecamImagerConfig(OpticalElementsMixin, BaseModel):
 class LcoSoarGhtsBluecamImager(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal["EXPOSE"]
-    instrument_type: str = "SOAR_GHTS_BLUECAM_IMAGER"
+    instrument_type: Literal["SOAR_GHTS_BLUECAM_IMAGER"] = "SOAR_GHTS_BLUECAM_IMAGER"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[LcoSoarGhtsBluecamImagerConfig] = []
@@ -460,7 +460,7 @@ class LcoSoarGhtsRedcamConfig(OpticalElementsMixin, BaseModel):
 class LcoSoarGhtsRedcam(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal["SPECTRUM", "ENGINEERING", "SCRIPT", "ARC", "LAMP_FLAT"]
-    instrument_type: str = "SOAR_GHTS_REDCAM"
+    instrument_type: Literal["SOAR_GHTS_REDCAM"] = "SOAR_GHTS_REDCAM"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[LcoSoarGhtsRedcamConfig] = []
@@ -512,7 +512,7 @@ class LcoSoarGhtsRedcamImagerConfig(OpticalElementsMixin, BaseModel):
 class LcoSoarGhtsRedcamImager(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal["EXPOSE"]
-    instrument_type: str = "SOAR_GHTS_REDCAM_IMAGER"
+    instrument_type: Literal["SOAR_GHTS_REDCAM_IMAGER"] = "SOAR_GHTS_REDCAM_IMAGER"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[LcoSoarGhtsRedcamImagerConfig] = []
@@ -563,7 +563,7 @@ class LcoSoarTriplespecConfig(OpticalElementsMixin, BaseModel):
 class LcoSoarTriplespec(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal["SPECTRUM", "STANDARD", "ARC", "LAMP_FLAT", "BIAS"]
-    instrument_type: str = "SOAR_TRIPLESPEC"
+    instrument_type: Literal["SOAR_TRIPLESPEC"] = "SOAR_TRIPLESPEC"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[LcoSoarTriplespecConfig] = []

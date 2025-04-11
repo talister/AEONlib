@@ -54,7 +54,7 @@ class {{ ctx.class_name }}Config(OpticalElementsMixin, BaseModel):
 class {{ ctx.class_name }}(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     type: Literal[{% for t in ctx.config_types %}"{{ t }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-    instrument_type: str = "{{ ctx.instrument_type }}"
+    instrument_type: Literal["{{ ctx.instrument_type }}"] = "{{ ctx.instrument_type }}"
     repeat_duration: NonNegativeInt | None = None
     extra_params: dict[Any, Any] = {}
     instrument_configs: list[{{ ctx.class_name }}Config] = []

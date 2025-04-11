@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Annotated, Any, Literal
 
 from annotated_types import Ge, Le
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic.types import (
     NonNegativeFloat,
     NonNegativeInt,
@@ -45,6 +45,10 @@ class Cadence(BaseModel):
     jitter: Annotated[float, Ge(0.02)]
 
 
+# Informs Pydantic which instrument configuration type should be used during parsing
+Configuration = Annotated[LCO_INSTRUMENTS, Field(discriminator="instrument_type")]
+
+
 class Request(BaseModel):
     """A request for a single, discrete observation. One group can contain multiple
     requests"""
@@ -70,7 +74,7 @@ class Request(BaseModel):
     observation_note: Annotated[str, StringConstraints(max_length=255)] | None = None
     """Text describing this Request"""
     extra_params: dict[Any, Any] = {}
-    configurations: list[LCO_INSTRUMENTS]
+    configurations: list[Configuration]
     cadence: Cadence | None = None
     windows: list[Window]
     location: Location
