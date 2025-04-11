@@ -38,3 +38,11 @@ def test_valid_requests(facility: LcoFacility, request_group: RequestGroup):
     if not valid:
         logger.error("Online validation failed. Server response: %s", errors)
     assert valid
+
+
+def test_submit_request(facility: LcoFacility):
+    request_group_in = LCO_REQUESTS["lco_1m0_scicam_sinistro"]
+    request_group_out = facility.submit_request_group(request_group_in)
+    assert request_group_out.id
+    assert request_group_out.state == "PENDING"
+    assert request_group_out.created

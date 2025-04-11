@@ -24,7 +24,6 @@ def request_group() -> RequestGroup:
         observation_type="NORMAL",
         operator="SINGLE",
         proposal="test",
-        submitter_id="bob",
         ipp_value=1.0,
         requests=[
             Request(

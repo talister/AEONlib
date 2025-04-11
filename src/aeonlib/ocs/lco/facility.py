@@ -5,7 +5,7 @@ from typing import Any, Callable, Literal
 import httpx
 from astropy.table import Table
 
-from aeonlib.ocs.request_models import RequestGroup
+from aeonlib.ocs.request_models import RequestGroup, SubmittedRequestGroup
 
 logger = logging.getLogger(__name__)
 
@@ -58,10 +58,18 @@ class LcoFacility:
     def validate_request_group(
         self, request_group: RequestGroup
     ) -> tuple[bool, list[Any]]:
-        dump = request_group.model_dump(mode="json", exclude_none=True)
-        response = self.client.post("/requestgroups/validate/", json=dump)
+        payload = request_group.model_dump(mode="json", exclude_none=True)
+        response = self.client.post("/requestgroups/validate/", json=payload)
         response = response.json()
         if response["request_durations"]:
             return True, []
         else:
             return False, response["errors"]
+
+    def submit_request_group(
+        self, request_group: RequestGroup
+    ) -> SubmittedRequestGroup:
+        payload = request_group.model_dump(mode="json", exclude_none=True)
+        response = self.client.post("/requestgroups/", json=payload)
+        response.raise_for_status()
+        return SubmittedRequestGroup.model_validate_json(response.content)

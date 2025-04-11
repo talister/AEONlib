@@ -19,7 +19,6 @@ lco_1m0_scicam_sinistro = RequestGroup(
     observation_type="NORMAL",
     operator="SINGLE",
     proposal="TEST_PROPOSAL",
-    submitter_id="bob",
     ipp_value=1.0,
     requests=[
         Request(
@@ -64,7 +63,6 @@ lco_2m0_floyds_scicam = RequestGroup(
     observation_type="NORMAL",
     operator="SINGLE",
     proposal="TEST_PROPOSAL",
-    submitter_id="bob",
     ipp_value=1.0,
     requests=[
         Request(
@@ -110,7 +108,6 @@ lco_2m0_scicam_muscat = RequestGroup(
     observation_type="NORMAL",
     operator="SINGLE",
     proposal="TEST_PROPOSAL",
-    submitter_id="bob",
     ipp_value=1.0,
     requests=[
         Request(

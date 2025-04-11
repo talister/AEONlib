@@ -112,5 +112,18 @@ class RequestGroup(BaseModel):
     Requests submitted with TIME_CRITICAL are scheduled normally but with a high priority.
     These modes are only available if the Proposal was granted special time.
     """
-    submitter_id: str
     requests: list[Request] = []
+
+
+class SubmittedRequestGroup(RequestGroup):
+    """
+    Represents an request group that is saved in the OCS database
+    """
+
+    id: int
+    state: Literal[
+        "PENDING", "COMPLETED", "WINDOW_EXPIRED", "FAILURE_LIMIT_REACHED", "CANCELED"
+    ]
+    submitter: str
+    created: datetime
+    modified: datetime
