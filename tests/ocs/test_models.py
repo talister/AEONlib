@@ -41,7 +41,9 @@ def request_group() -> RequestGroup:
                                 exposure_count=1,
                                 exposure_time=10,
                                 mode="central_2k_2x2",
-                                filter="R",
+                                optical_elements=instrument.optical_elements_class(
+                                    filter="R"
+                                ),
                             )
                         ],
                         acquisition_config=instrument.acquisition_config_class(

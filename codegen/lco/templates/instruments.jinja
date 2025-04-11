@@ -1,17 +1,21 @@
-from typing import Any, Annotated, ClassVar, Literal, Union
+from typing import Any, Annotated, Literal, Union
 
 from annotated_types import Le
 from pydantic import BaseModel, ConfigDict
-from pydantic.types import (
-    NonNegativeInt,
-    PositiveInt,
-)
+from pydantic.types import NonNegativeInt, PositiveInt
 
 from aeonlib.ocs.target_models import Constraints, SiderealTarget, NonSiderealTarget
-from aeonlib.ocs.config_models import Roi, OpticalElementsMixin
+from aeonlib.ocs.config_models import Roi
 
 
 {% for ctx in instruments %}
+class {{ ctx.class_name }}OpticalElements(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+    {% for key, values in ctx.optical_elements.items() %}
+    {{ key }}: Literal[{% for v in values %}"{{ v['code'] }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+    {% endfor %}
+
+
 class {{ ctx.class_name }}GuidingConfig(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     mode: Literal[{% for m in ctx.guiding_modes %}"{{ m }}"{% if not loop.last %}, {% endif %}{% endfor %}]
@@ -30,7 +34,7 @@ class {{ ctx.class_name }}AcquisitionConfig(BaseModel):
     extra_params: dict[Any, Any] = {}
 
 
-class {{ ctx.class_name }}Config(OpticalElementsMixin, BaseModel):
+class {{ ctx.class_name }}Config(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
     exposure_count: PositiveInt
     """The number of exposures to take. This field must be set to a value greater than 0"""
@@ -42,13 +46,7 @@ class {{ ctx.class_name }}Config(OpticalElementsMixin, BaseModel):
     {% endif %}
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
-    """This is completely generated at runtime via configdb stuff"""
-    {% for key, values in ctx.optical_elements.items() %}
-    {{ key }}: Literal[{% for v in values %}"{{ v['code'] }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-    {% endfor %}
-    optical_element_fields: ClassVar[list[str]] = [{% for key in ctx.optical_elements.keys() %}"{{ key }}"{% if not loop.last %}, {% endif %}{% endfor %}]
-
-
+    optical_elements: {{ ctx.class_name}}OpticalElements
 
 
 class {{ ctx.class_name }}(BaseModel):
@@ -66,6 +64,7 @@ class {{ ctx.class_name }}(BaseModel):
     config_class = {{ ctx.class_name }}Config
     guiding_config_class = {{ ctx.class_name }}GuidingConfig
     acquisition_config_class = {{ ctx.class_name }}AcquisitionConfig
+    optical_elements_class = {{ ctx.class_name }}OpticalElements
 
 
 {% endfor %}

@@ -36,7 +36,9 @@ lco_1m0_scicam_sinistro = RequestGroup(
                             exposure_count=1,
                             exposure_time=10,
                             mode="central_2k_2x2",
-                            filter="R",
+                            optical_elements=Lco1M0ScicamSinistro.optical_elements_class(
+                                filter="B"
+                            ),
                         )
                     ],
                     acquisition_config=Lco1M0ScicamSinistro.acquisition_config_class(
@@ -79,8 +81,10 @@ lco_2m0_floyds_scicam = RequestGroup(
                             rotator_mode="VFLOAT",
                             exposure_count=1,
                             exposure_time=10,
-                            slit="slit_2.0as",
                             mode="default",
+                            optical_elements=Lco2M0FloydsScicam.optical_elements_class(
+                                slit="slit_6.0as"
+                            ),
                         )
                     ],
                     acquisition_config=Lco2M0FloydsScicam.acquisition_config_class(
@@ -123,10 +127,12 @@ lco_2m0_scicam_muscat = RequestGroup(
                             exposure_count=1,
                             exposure_time=10,
                             mode="MUSCAT_FAST",
-                            narrowband_g_position="in",
-                            narrowband_r_position="out",
-                            narrowband_i_position="in",
-                            narrowband_z_position="out",
+                            optical_elements=Lco2M0ScicamMuscat.optical_elements_class(
+                                narrowband_g_position="in",
+                                narrowband_r_position="out",
+                                narrowband_i_position="in",
+                                narrowband_z_position="out",
+                            ),
                             extra_params={  # Hate this. TODO: Hoist these to class
                                 "exposure_time_g": 10,
                                 "exposure_time_r": 10,
