@@ -11,7 +11,6 @@ on all instruments.
 """
 
 import logging
-import os
 
 import pytest
 
@@ -26,8 +25,7 @@ pytestmark = pytest.mark.online
 
 @pytest.fixture
 def facility() -> LcoFacility:
-    api_root = os.getenv("AEONLIB_TEST_OCS", "http://localhost:8000/api")
-    return LcoFacility(api_root=api_root)
+    return LcoFacility()
 
 
 @pytest.mark.parametrize(

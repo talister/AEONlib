@@ -6,6 +6,33 @@ A suite of modules to enable TDA/MMA observations
 
 [issues](https://github.com/AEONplus/AEONlib/issues)
 
+### Configuration
+Many of the facilities and services accessed by AEONlib require specific configuration such
+as api keys, urls, etc. All configuration can be supplied by either supplying a .env file or
+setting environmental variables in the execution environment.
+
+Example .env file:
+
+```
+AEON_LCO_API_ROOT="https://observe.lco.global/api"
+AEON_LCO_TOKEN="my-api-token"
+```
+
+Or set environmental variables via the shell:
+
+```bash
+export AEON_LCO_API_ROOT="https://observe.lco.global/api"
+export AEON_LCO_TOKEN="my-api-token"
+```
+
+All configuration keys are prefixed with AEON_ to prevent conflicts. See the documentation for
+each service to see which configuration keys are available, or check
+[conf.py](src/aeonlib/conf.py)
+
+Environmental variables take precedence over .env files. See the
+[pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) documentation
+for more details.
+
 
 ### Testing
 This project uses [pytest](https://docs.pytest.org/) to run tests:
