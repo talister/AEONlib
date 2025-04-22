@@ -1,22 +1,13 @@
 import logging
-import os
 from typing import Any, Callable, Literal
 
 import httpx
 from astropy.table import Table
 
+from aeonlib.conf import settings as default_settings
 from aeonlib.ocs.request_models import RequestGroup, SubmittedRequestGroup
 
 logger = logging.getLogger(__name__)
-
-
-def lco_token() -> str:
-    token = os.getenv("AEONLIB_LCO_TOKEN", "")
-    if not token:
-        logger.error(
-            "AEONLIB_LCO_TOKEN environment variable not set, request will be unauthenticated"
-        )
-    return token
 
 
 def walk_pagination(response: dict, callback: Callable[[dict], None]):
@@ -34,10 +25,21 @@ def dict_table(proposals: list[dict], fields: list[str]) -> Table:
 
 
 class LcoFacility:
-    def __init__(self, *args, api_root="https://api.lco.global", **kwargs):
-        self.api_key = lco_token()
-        self.headers = {"Authorization": f"Token {self.api_key}"}
-        self.client = httpx.Client(base_url=api_root, headers=self.headers)
+    """
+    Las Cumbres Observatory Facility
+    Configuration:
+        - AEON_LCO_TOKEN: API token for authentication
+        - AEON_LCO_API_ROOT: Root URL of the API
+    """
+
+    def __init__(self, settings=default_settings):
+        if not settings.lco_token:
+            logger.warn(
+                "AEON_LCO_TOKEN setting is missing, request will be unauthenticated"
+            )
+        else:
+            self.headers = {"Authorization": f"Token {settings.lco_token}"}
+        self.client = httpx.Client(base_url=settings.lco_api_root, headers=self.headers)
 
     def __del__(self):
         self.client.close()
