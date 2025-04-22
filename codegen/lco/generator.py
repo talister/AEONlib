@@ -4,8 +4,8 @@ import json
 import sys
 from pathlib import Path
 
+import textcase
 from jinja2 import Environment, FileSystemLoader
-from textcase import case, convert
 
 
 def get_modes(ins: dict, type: str) -> list[str]:
@@ -42,7 +42,7 @@ def generate_instrument_configs(ins_s: str) -> str:
         instruments.append(
             {
                 "instrument_type": instrument_type,
-                "class_name": "Lco" + convert(instrument_type, case.PASCAL),
+                "class_name": f"Lco{textcase.pascal(instrument_type)}",
                 "config_types": [
                     c["code"] for c in ins["configuration_types"].values()
                 ],

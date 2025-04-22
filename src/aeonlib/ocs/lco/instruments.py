@@ -305,7 +305,7 @@ class LcoBlancoNewfirmConfig(BaseModel):
     """The number of exposures to take. This field must be set to a value greater than 0"""
     exposure_time: NonNegativeInt
     """ Exposure time in seconds"""
-    mode: Literal["fowler1_coadds1", "fowler8_coadds1", "fowler16_coadds1"]
+    mode: Literal["fowler1", "fowler8", "fowler16", "fowler2", "fowler4"]
     rois: list[Roi] | None = None
     extra_params: dict[Any, Any] = {}
     optical_elements: LcoBlancoNewfirmOpticalElements
