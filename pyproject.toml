@@ -23,9 +23,12 @@ codegen = [
 ]
 
 dev = ["pytest>=8.3.5"]
+eso = ["p2api>=1.0.10"]
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib",  "-m not online"]
 markers = [
-    "online: Marks tests that run online, for example, validating schemas"
+    "online: Marks tests that run online, for example, validating schemas",
+    "side_effect: Online tests that have side effects such as creating observation requests",
 ]
+log_cli = true
