@@ -64,7 +64,7 @@ class LcoFacility:
         logger.debug("LcoFacility.validate_request_group -> %s", payload)
         response = self.client.post("/requestgroups/validate/", json=payload)
         response = response.json()
-        logger.debug("LcoFacility.validate_request_group <- %s", response)
+        logger.debug("<- %s", response)
         if response["request_durations"]:
             return True, []
         else:
@@ -74,8 +74,8 @@ class LcoFacility:
         self, request_group: RequestGroup
     ) -> SubmittedRequestGroup:
         payload = request_group.model_dump(mode="json", exclude_none=True)
-        logger.debug("LcoFacility.submit_request_group -> %s", payload)
+        logger.debug("-> %s", payload)
         response = self.client.post("/requestgroups/", json=payload)
         response.raise_for_status()
-        logger.debug("LcoFacility.submit_request_group <- %s", response.content)
+        logger.debug("<- %s", response.content)
         return SubmittedRequestGroup.model_validate_json(response.content)

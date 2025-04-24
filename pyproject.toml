@@ -32,3 +32,4 @@ markers = [
     "side_effect: Online tests that have side effects such as creating observation requests",
 ]
 log_cli = true
+log_cli_format = "%(levelname)s [%(name)s %(filename)s:%(lineno)s %(funcName)s()] %(message)s"

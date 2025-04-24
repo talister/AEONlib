@@ -3,7 +3,7 @@ import logging
 from aeonlib.conf import settings as default_settings
 from aeonlib.exceptions import ServiceNetworkError
 
-from .models import Container, ObservationBlock
+from .models import Container, ObservationBlock, Template
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ class EsoFacility:
             assert container and version
         except Exception as e:
             raise ESONetworkError("Failed to create ESO folder") from e
-        logger.debug("EsoFacility.create_folder <- %s (%s)", container, version)
+        logger.debug("<- %s (%s)", container, version)
 
         return Container.model_validate({**container, "version": version})
 
@@ -43,7 +43,7 @@ class EsoFacility:
             assert container and version
         except Exception as e:
             raise ESONetworkError("Failed to get ESO container") from e
-        logger.debug("EsoFacility.get_container <- %s (%s)", container, version)
+        logger.debug("<- %s (%s)", container, version)
 
         return Container.model_validate({**container, "version": version})
 
@@ -59,7 +59,7 @@ class EsoFacility:
             assert ob and version
         except Exception as e:
             raise ESONetworkError("Failed to create ESO observation block") from e
-        logger.debug("EsoFacility.create_observation_block <- %s (%s)", ob, version)
+        logger.debug("<- %s (%s)", ob, version)
 
         return ObservationBlock.model_validate({**ob, "version": version})
 
@@ -69,19 +69,19 @@ class EsoFacility:
             assert ob and version
         except Exception as e:
             raise ESONetworkError("Failed to get ESO observation block") from e
-        logger.debug("EsoFacility.get_observation_block <- %s (%s)", ob, version)
+        logger.debug("<- %s (%s)", ob, version)
 
         return ObservationBlock.model_validate({**ob, "version": version})
 
     def save_ob(self, ob: ObservationBlock) -> ObservationBlock:
         ob_dict = ob.model_dump(exclude={"version"})
-        logger.debug("EsoFacility.save_ob -> %s", ob_dict)
+        logger.debug("-> %s", ob_dict)
         try:
             new_ob_dict, version = self.api.saveOB(ob_dict, ob.version)
             assert new_ob_dict and version
         except Exception as e:
             raise ESONetworkError("Failed to update ESO observation block") from e
-        logger.debug("EsoFacility.save_ob <- %s (%s)", new_ob_dict, version)
+        logger.debug("<- %s (%s)", new_ob_dict, version)
 
         return ObservationBlock.model_validate({**new_ob_dict, "version": version})
 
