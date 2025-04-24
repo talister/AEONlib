@@ -28,45 +28,65 @@ class EsoFacility:
         )
 
     def create_folder(self, container_id: int, name: str) -> Container:
-        container, version = self.api.createFolder(container_id, name)
-        if not container or not version:
-            raise ESONetworkError("Failed to create ESO folder")
+        try:
+            container, version = self.api.createFolder(container_id, name)
+            assert container and version
+        except Exception as e:
+            raise ESONetworkError("Failed to create ESO folder") from e
         logger.debug("EsoFacility.create_folder <- %s (%s)", container, version)
+
         return Container.model_validate({**container, "version": version})
 
     def get_container(self, container_id: int) -> Container:
-        container, version = self.api.getContainer(container_id)
-        if not container or not version:
-            raise ESONetworkError("Failed to get ESO container")
+        try:
+            container, version = self.api.getContainer(container_id)
+            assert container and version
+        except Exception as e:
+            raise ESONetworkError("Failed to get ESO container") from e
         logger.debug("EsoFacility.get_container <- %s (%s)", container, version)
+
         return Container.model_validate({**container, "version": version})
 
     def delete_container(self, container: Container) -> None:
-        self.api.deleteContainer(container.container_id, container.version)
+        try:
+            self.api.deleteContainer(container.container_id, container.version)
+        except Exception as e:
+            raise ESONetworkError("Failed to delete ESO container") from e
 
     def create_ob(self, container: Container, name: str) -> ObservationBlock:
-        ob, version = self.api.createOB(container.container_id, name)
-        if not ob or not version:
-            raise ESONetworkError("Failed to create ESO observation block")
+        try:
+            ob, version = self.api.createOB(container.container_id, name)
+            assert ob and version
+        except Exception as e:
+            raise ESONetworkError("Failed to create ESO observation block") from e
         logger.debug("EsoFacility.create_observation_block <- %s (%s)", ob, version)
-        ob = ObservationBlock.model_validate({**ob, "version": version})
-        return ob
+
+        return ObservationBlock.model_validate({**ob, "version": version})
 
     def get_ob(self, ob_id: int) -> ObservationBlock:
-        ob, version = self.api.getOB(ob_id)
-        if not ob or not version:
-            raise ESONetworkError("Failed to get ESO observation block")
+        try:
+            ob, version = self.api.getOB(ob_id)
+            assert ob and version
+        except Exception as e:
+            raise ESONetworkError("Failed to get ESO observation block") from e
         logger.debug("EsoFacility.get_observation_block <- %s (%s)", ob, version)
+
         return ObservationBlock.model_validate({**ob, "version": version})
 
     def save_ob(self, ob: ObservationBlock) -> ObservationBlock:
         ob_dict = ob.model_dump(exclude={"version"})
         logger.debug("EsoFacility.save_ob -> %s", ob_dict)
-        new_ob_dict, version = self.api.saveOB(ob_dict, ob.version)
-        if not new_ob_dict or not version:
-            raise ESONetworkError("Failed to update ESO observation block")
+        try:
+            new_ob_dict, version = self.api.saveOB(ob_dict, ob.version)
+            assert new_ob_dict and version
+        except Exception as e:
+            raise ESONetworkError("Failed to update ESO observation block") from e
         logger.debug("EsoFacility.save_ob <- %s (%s)", new_ob_dict, version)
+
         return ObservationBlock.model_validate({**new_ob_dict, "version": version})
 
     def delete_ob(self, ob: ObservationBlock) -> None:
-        self.api.deleteOB(ob.ob_id, ob.version)
+        try:
+            self.api.deleteOB(ob.ob_id, ob.version)
+        except Exception as e:
+            raise ESONetworkError("Failed to delete ESO observation block") from e
