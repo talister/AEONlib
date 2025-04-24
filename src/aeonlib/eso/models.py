@@ -8,6 +8,55 @@ class EsoModel(BaseModel):
     )
 
 
+class Constraints(EsoModel):
+    airmass: float
+    fli: float
+    moon_distance: int
+    name: str
+    seeing: float
+    sky_transparency: str
+    twilight: int
+    water_vapour: float
+
+
+class ObsDescription(EsoModel):
+    instrument_comments: str
+    name: str
+    user_comments: str
+
+
+class Target(EsoModel):
+    dec: str
+    differential_dec: float
+    differential_ra: float
+    epoch: float
+    equinox: str
+    name: str
+    proper_motion_dec: float
+    proper_motion_ra: float
+    ra: str
+
+
+class ObservationBlock(EsoModel):
+    version: str
+    constraints: Constraints
+    obs_description: ObsDescription
+    target: Target
+    execution_time: int
+    exposure_time: int
+    instrument: str
+    ip_version: float
+    item_type: str
+    migrate: bool
+    grade: str = "?"
+    name: str
+    ob_id: int
+    ob_status: str
+    parent_container_id: int
+    run_id: int
+    user_priority: int
+
+
 class Container(EsoModel):
     container_id: int
     item_count: int
@@ -15,3 +64,4 @@ class Container(EsoModel):
     name: str
     parent_container_id: int
     run_id: int
+    version: str
