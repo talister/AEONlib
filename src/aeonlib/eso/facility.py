@@ -3,7 +3,7 @@ import logging
 from aeonlib.conf import settings as default_settings
 from aeonlib.exceptions import ServiceNetworkError
 
-from .models import Container, ObservationBlock, Template
+from .models import AbsoluteTimeConstraints, Container, ObservationBlock, Template
 
 logger = logging.getLogger(__name__)
 
@@ -152,3 +152,36 @@ class EsoFacility:
         logger.debug("<- %s", template)
 
         return Template.model_validate({**new_template, "version": version})
+
+    def get_absolute_time_constraints(
+        self, ob: ObservationBlock
+    ) -> AbsoluteTimeConstraints:
+        try:
+            constraints, version = self.api.getAbsoluteTimeConstraints(ob.ob_id)
+            print("Constraints:", constraints)
+            assert constraints is not None and version is not None
+        except Exception as e:
+            raise ESONetworkError("Failed to get ESO absolute time constraints") from e
+        logger.debug("<- %s (%s)", constraints, version)
+
+        return AbsoluteTimeConstraints.model_validate(
+            {"constraints": constraints, "version": version}
+        )
+
+    def save_absolute_time_constraints(
+        self, ob: ObservationBlock, constraints: AbsoluteTimeConstraints
+    ) -> AbsoluteTimeConstraints:
+        constraints_dict = constraints.model_dump(mode="json", exclude={"version"})
+        logger.debug("-> %s", constraints_dict)
+        try:
+            new_constraints, version = self.api.saveAbsoluteTimeConstraints(
+                ob.ob_id, constraints_dict["constraints"], constraints.version
+            )
+            assert new_constraints and version
+        except Exception as e:
+            raise ESONetworkError("Failed to set ESO absolute time constraints") from e
+        logger.debug("<- %s (%s)", constraints, version)
+
+        return AbsoluteTimeConstraints.model_validate(
+            {"constraints": new_constraints, "version": version}
+        )

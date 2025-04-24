@@ -1,6 +1,9 @@
+from datetime import datetime, timedelta
+
 import pytest
 
 from aeonlib.eso.facility import EsoFacility
+from aeonlib.eso.models import AbsoluteTimeConstraint
 
 pytestmark = pytest.mark.online
 
@@ -97,6 +100,36 @@ def test_update_template_params():
     facility.delete_template(ob, template)
     # Need to refresh observation block
     ob = facility.get_ob(ob.ob_id)
+    facility.delete_ob(ob)
+    # Need to refresh the container
+    folder = facility.get_container(folder.container_id)
+    facility.delete_container(folder)
+
+
+@pytest.mark.side_effect
+def test_save_absolute_time_constraints():
+    facility = EsoFacility()
+    folder = facility.create_folder(
+        ESO_TUTORIAL_CONTAINER_ID, "AEONlib.test_save_abs_time_con"
+    )
+    ob = facility.create_ob(folder, "AEONLIB.test_save_abs_time_con.ob")
+    abs_constraints = facility.get_absolute_time_constraints(ob)
+    assert len(abs_constraints.constraints) == 0
+    abs_constraints.constraints.append(
+        AbsoluteTimeConstraint(
+            start=datetime.now(), end=datetime.now() + timedelta(days=30)
+        )
+    )
+    new_abs_constraints = facility.save_absolute_time_constraints(ob, abs_constraints)
+    # Saving loses some precision on time, so just compare the date for this test
+    assert (
+        new_abs_constraints.constraints[0].start.date()
+        == abs_constraints.constraints[0].start.date()
+    )
+    assert (
+        new_abs_constraints.constraints[0].end.date()
+        == abs_constraints.constraints[0].end.date()
+    )
     facility.delete_ob(ob)
     # Need to refresh the container
     folder = facility.get_container(folder.container_id)

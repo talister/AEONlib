@@ -1,6 +1,7 @@
+from datetime import datetime
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
 
@@ -77,4 +78,27 @@ class Template(EsoModel):
     """
     TODO: see if we can auto-generate these somehow
     """
+    version: str
+
+
+# TODO figure out how to use a general Window class for these constraints
+class AbsoluteTimeConstraint(EsoModel):
+    # Fields are aliased due to from being a reserved keyword in Python
+    start: datetime = Field(..., serialization_alias="from", validation_alias="from")
+    end: datetime = Field(..., serialization_alias="to", validation_alias="to")
+
+
+class AbsoluteTimeConstraints(EsoModel):
+    constraints: list[AbsoluteTimeConstraint]
+    version: str
+
+
+class SiderealTimeConstraint(EsoModel):
+    # Fields are aliased due to from being a reserved keyword in Python
+    start: str = Field(..., serialization_alias="from", validation_alias="from")
+    end: str = Field(..., serialization_alias="to", validation_alias="to")
+
+
+class SiderealTimeConstraints(EsoModel):
+    constraints: list[SiderealTimeConstraint]
     version: str
