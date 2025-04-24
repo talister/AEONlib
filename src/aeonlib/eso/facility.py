@@ -90,3 +90,19 @@ class EsoFacility:
             self.api.deleteOB(ob.ob_id, ob.version)
         except Exception as e:
             raise ESONetworkError("Failed to delete ESO observation block") from e
+
+    def create_template(self, ob: ObservationBlock, name: str) -> Template:
+        try:
+            template, version = self.api.createTemplate(ob.ob_id, name)
+            assert template and version
+        except Exception as e:
+            raise ESONetworkError("Failed to create ESO template") from e
+        logger.debug("<- %s (%s)", template, version)
+
+        return Template.model_validate({**template, "version": version})
+
+    def delete_template(self, ob: ObservationBlock, template: Template) -> None:
+        try:
+            self.api.deleteTemplate(ob.ob_id, template.template_id, template.version)
+        except Exception as e:
+            raise ESONetworkError("Failed to delete ESO template") from e

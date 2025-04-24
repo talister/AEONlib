@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
 
@@ -64,4 +66,15 @@ class Container(EsoModel):
     name: str
     parent_container_id: int
     run_id: int
+    version: str
+
+
+class Template(EsoModel):
+    template_id: int
+    template_name: str
+    type: str
+    parameters: list[dict[str, Any]]
+    """
+    TODO: see if we can auto-generate these somehow
+    """
     version: str

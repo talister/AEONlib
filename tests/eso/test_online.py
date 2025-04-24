@@ -49,3 +49,22 @@ def test_save_ob():
     # Need to refresh the container
     folder = facility.get_container(folder.container_id)
     facility.delete_container(folder)
+
+
+@pytest.mark.side_effect
+def test_create_template():
+    facility = EsoFacility()
+    folder = facility.create_folder(
+        ESO_TUTORIAL_CONTAINER_ID, "AEONlib.test_create_template"
+    )
+    ob = facility.create_ob(folder, "AEONLIB.test_create_template.ob")
+    template = facility.create_template(ob, "UVES_blue_acq_slit")
+    assert template.template_id
+    assert len(template.parameters)
+    facility.delete_template(ob, template)
+    # Need to refresh observation block
+    ob = facility.get_ob(ob.ob_id)
+    facility.delete_ob(ob)
+    # Need to refresh the container
+    folder = facility.get_container(folder.container_id)
+    facility.delete_container(folder)
