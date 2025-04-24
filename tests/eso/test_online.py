@@ -68,3 +68,36 @@ def test_create_template():
     # Need to refresh the container
     folder = facility.get_container(folder.container_id)
     facility.delete_container(folder)
+
+
+@pytest.mark.side_effect
+def test_update_template_params():
+    facility = EsoFacility()
+    folder = facility.create_folder(
+        ESO_TUTORIAL_CONTAINER_ID, "AEONlib.test_update_template_params"
+    )
+    ob = facility.create_ob(folder, "AEONLIB.test_update_template_params.ob")
+    template = facility.create_template(ob, "UVES_blue_acq_slit")
+    # Check initial rotator mode is not SKY
+    assert not any(
+        p.get("name") == "INS.DROT.MODE" and p.get("value") == "SKY"
+        for p in template.parameters
+    )
+    new_params = {
+        "TEL.GS1.ALPHA": "11:22:33.000",
+        "INS.DROT.MODE": "SKY",
+        "INS.ADC.MODE": "AUTO",
+    }
+    template = facility.update_template_params(ob, template, new_params)
+    # Check updated rotator mode is SKY
+    assert any(
+        p.get("name") == "INS.DROT.MODE" and p.get("value") == "SKY"
+        for p in template.parameters
+    )
+    facility.delete_template(ob, template)
+    # Need to refresh observation block
+    ob = facility.get_ob(ob.ob_id)
+    facility.delete_ob(ob)
+    # Need to refresh the container
+    folder = facility.get_container(folder.container_id)
+    facility.delete_container(folder)

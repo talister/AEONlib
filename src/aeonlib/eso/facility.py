@@ -106,3 +106,49 @@ class EsoFacility:
             self.api.deleteTemplate(ob.ob_id, template.template_id, template.version)
         except Exception as e:
             raise ESONetworkError("Failed to delete ESO template") from e
+
+    def get_template(self, ob: ObservationBlock, template_id: str) -> Template:
+        try:
+            template_dict, version = self.api.getTemplate(ob.ob_id, template_id)
+            assert template_dict and version
+        except Exception as e:
+            raise ESONetworkError("Failed to get ESO template") from e
+        logger.debug("<- %s", template_dict)
+
+        return Template.model_validate({**template_dict, "version": version})
+
+    def update_template_params(
+        self, ob: ObservationBlock, template: Template, params: dict
+    ) -> Template:
+        """
+        This method simply updates the parameter dictionary in the template object and saves it.
+        Alternatively, one can simply update the Template object directly and use
+        `save_template` to save the changes.
+        This method is included for consistency with the ESO client library.
+        """
+        template_dict = template.model_dump(exclude={"version"})
+        logger.debug("-> %s (params: %s)", template_dict, params)
+        try:
+            new_template, version = self.api.setTemplateParams(
+                ob.ob_id, template_dict, params, template.version
+            )
+            assert new_template and version
+        except Exception as e:
+            raise ESONetworkError("Failed to update ESO template parameters") from e
+        logger.debug("<- %s (%s)", template, version)
+
+        return Template.model_validate({**new_template, "version": version})
+
+    def save_template(self, ob: ObservationBlock, template: Template) -> Template:
+        template_dict = template.model_dump(exclude={"version"})
+        logger.debug("-> %s", template_dict)
+        try:
+            new_template, version = self.api.saveTemplate(
+                ob.ob_id, template_dict, template.version
+            )
+            assert new_template and version
+        except Exception as e:
+            raise ESONetworkError("Failed to save ESO template") from e
+        logger.debug("<- %s", template)
+
+        return Template.model_validate({**new_template, "version": version})
