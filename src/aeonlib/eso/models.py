@@ -90,7 +90,7 @@ class AbsoluteTimeConstraint(EsoModel):
 
 class AbsoluteTimeConstraints(EsoModel):
     constraints: list[AbsoluteTimeConstraint]
-    version: str
+    version: str | None = None
 
 
 class SiderealTimeConstraint(EsoModel):
@@ -101,4 +101,4 @@ class SiderealTimeConstraint(EsoModel):
 
 class SiderealTimeConstraints(EsoModel):
     constraints: list[SiderealTimeConstraint]
-    version: str
+    version: str | None = None

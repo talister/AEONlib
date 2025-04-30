@@ -3,7 +3,13 @@ import logging
 from aeonlib.conf import settings as default_settings
 from aeonlib.exceptions import ServiceNetworkError
 
-from .models import AbsoluteTimeConstraints, Container, ObservationBlock, Template
+from .models import (
+    AbsoluteTimeConstraints,
+    Container,
+    ObservationBlock,
+    SiderealTimeConstraints,
+    Template,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -158,7 +164,6 @@ class EsoFacility:
     ) -> AbsoluteTimeConstraints:
         try:
             constraints, version = self.api.getAbsoluteTimeConstraints(ob.ob_id)
-            print("Constraints:", constraints)
             assert constraints is not None and version is not None
         except Exception as e:
             raise ESONetworkError("Failed to get ESO absolute time constraints") from e
@@ -171,6 +176,9 @@ class EsoFacility:
     def save_absolute_time_constraints(
         self, ob: ObservationBlock, constraints: AbsoluteTimeConstraints
     ) -> AbsoluteTimeConstraints:
+        if not constraints.version:
+            # This is a new constraints object, so we need to request a version
+            constraints.version = self.get_absolute_time_constraints(ob).version
         constraints_dict = constraints.model_dump(mode="json", exclude={"version"})
         logger.debug("-> %s", constraints_dict)
         try:
@@ -183,5 +191,40 @@ class EsoFacility:
         logger.debug("<- %s (%s)", constraints, version)
 
         return AbsoluteTimeConstraints.model_validate(
+            {"constraints": new_constraints, "version": version}
+        )
+
+    def get_sidereal_time_constraints(
+        self, ob: ObservationBlock
+    ) -> SiderealTimeConstraints:
+        try:
+            constraints, version = self.api.getSiderealTimeConstraints(ob.ob_id)
+            assert constraints is not None and version is not None
+        except Exception as e:
+            raise ESONetworkError("Failed to get ESO sidereal time constraints") from e
+        logger.debug("<- %s (%s)", constraints, version)
+
+        return SiderealTimeConstraints.model_validate(
+            {"constraints": constraints, "version": version}
+        )
+
+    def save_sidereal_time_constraints(
+        self, ob: ObservationBlock, constraints: SiderealTimeConstraints
+    ) -> SiderealTimeConstraints:
+        if not constraints.version:
+            # This is a new constraints object, so we need to request a version
+            constraints.version = self.get_sidereal_time_constraints(ob).version
+        constraints_dict = constraints.model_dump(mode="json", exclude={"version"})
+        logger.debug("-> %s", constraints_dict)
+        try:
+            new_constraints, version = self.api.saveSiderealTimeConstraints(
+                ob.ob_id, constraints_dict["constraints"], constraints.version
+            )
+            assert new_constraints and version
+        except Exception as e:
+            raise ESONetworkError("Failed to set ESO sidereal time constraints") from e
+        logger.debug("<- %s (%s)", constraints, version)
+
+        return SiderealTimeConstraints.model_validate(
             {"constraints": new_constraints, "version": version}
         )

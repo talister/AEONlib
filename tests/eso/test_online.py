@@ -3,7 +3,12 @@ from datetime import datetime, timedelta
 import pytest
 
 from aeonlib.eso.facility import EsoFacility
-from aeonlib.eso.models import AbsoluteTimeConstraint
+from aeonlib.eso.models import (
+    AbsoluteTimeConstraint,
+    AbsoluteTimeConstraints,
+    SiderealTimeConstraint,
+    SiderealTimeConstraints,
+)
 
 pytestmark = pytest.mark.online
 
@@ -113,12 +118,12 @@ def test_save_absolute_time_constraints():
         ESO_TUTORIAL_CONTAINER_ID, "AEONlib.test_save_abs_time_con"
     )
     ob = facility.create_ob(folder, "AEONLIB.test_save_abs_time_con.ob")
-    abs_constraints = facility.get_absolute_time_constraints(ob)
-    assert len(abs_constraints.constraints) == 0
-    abs_constraints.constraints.append(
-        AbsoluteTimeConstraint(
-            start=datetime.now(), end=datetime.now() + timedelta(days=30)
-        )
+    abs_constraints = AbsoluteTimeConstraints(
+        constraints=[
+            AbsoluteTimeConstraint(
+                start=datetime.now(), end=datetime.now() + timedelta(days=30)
+            )
+        ]
     )
     new_abs_constraints = facility.save_absolute_time_constraints(ob, abs_constraints)
     # Saving loses some precision on time, so just compare the date for this test
@@ -129,6 +134,38 @@ def test_save_absolute_time_constraints():
     assert (
         new_abs_constraints.constraints[0].end.date()
         == abs_constraints.constraints[0].end.date()
+    )
+    facility.delete_ob(ob)
+    # Need to refresh the container
+    folder = facility.get_container(folder.container_id)
+    facility.delete_container(folder)
+
+
+@pytest.mark.side_effect
+def test_save_sidereal_time_constraints():
+    facility = EsoFacility()
+    folder = facility.create_folder(
+        ESO_TUTORIAL_CONTAINER_ID, "AEONlib.test_save_sidereal_time_con"
+    )
+    ob = facility.create_ob(folder, "AEONLIB.test_save_sidereal_time_con.ob")
+    sidereal_constraints = SiderealTimeConstraints(
+        constraints=[
+            SiderealTimeConstraint(
+                start=datetime.now().strftime("%H:%M"),
+                end=(datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
+            )
+        ]
+    )
+    new_sidereal_constraints = facility.save_sidereal_time_constraints(
+        ob, sidereal_constraints
+    )
+    assert (
+        new_sidereal_constraints.constraints[0].start
+        == sidereal_constraints.constraints[0].start
+    )
+    assert (
+        new_sidereal_constraints.constraints[0].end
+        == sidereal_constraints.constraints[0].end
     )
     facility.delete_ob(ob)
     # Need to refresh the container
