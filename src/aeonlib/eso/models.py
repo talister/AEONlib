@@ -1,8 +1,10 @@
 from datetime import datetime, time
-from typing import Any
+from typing import Any, Self
 
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
+
+from aeonlib.models import Window
 
 
 class EsoModel(BaseModel):
@@ -86,6 +88,13 @@ class AbsoluteTimeConstraint(EsoModel):
     # Fields are aliased due to from being a reserved keyword in Python
     start: datetime = Field(..., serialization_alias="from", validation_alias="from")
     end: datetime = Field(..., serialization_alias="to", validation_alias="to")
+
+    @classmethod
+    def from_window(cls, window: Window) -> Self:
+        if not window.start:
+            raise ValueError("ESO constraints require a valid start time")
+        else:
+            return cls.model_validate(window.model_dump(mode="json"))
 
 
 class AbsoluteTimeConstraints(EsoModel):
