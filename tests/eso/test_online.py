@@ -1,5 +1,5 @@
 import base64
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 from io import BytesIO
 
 import pytest
@@ -154,8 +154,8 @@ def test_save_sidereal_time_constraints():
     sidereal_constraints = SiderealTimeConstraints(
         constraints=[
             SiderealTimeConstraint(
-                start=datetime.now().strftime("%H:%M"),
-                end=(datetime.now() + timedelta(hours=1)).strftime("%H:%M"),
+                start=time(2, 0),
+                end=time(12, 0),
             )
         ]
     )

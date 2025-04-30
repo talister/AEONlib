@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, time
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -95,8 +95,8 @@ class AbsoluteTimeConstraints(EsoModel):
 
 class SiderealTimeConstraint(EsoModel):
     # Fields are aliased due to from being a reserved keyword in Python
-    start: str = Field(..., serialization_alias="from", validation_alias="from")
-    end: str = Field(..., serialization_alias="to", validation_alias="to")
+    start: time = Field(..., serialization_alias="from", validation_alias="from")
+    end: time = Field(..., serialization_alias="to", validation_alias="to")
 
 
 class SiderealTimeConstraints(EsoModel):
