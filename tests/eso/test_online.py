@@ -1,4 +1,6 @@
+import base64
 from datetime import datetime, timedelta
+from io import BytesIO
 
 import pytest
 
@@ -215,6 +217,27 @@ def test_save_ephemeris():
     new_ephemeris = facility.save_ephemeris(ob, ephemeris)
     assert new_ephemeris.text == ephemeris.text
     facility.delete_ephemeris(ob, new_ephemeris)
+    facility.delete_ob(ob)
+    # Need to refresh the container
+    folder = facility.get_container(folder.container_id)
+    facility.delete_container(folder)
+
+
+@pytest.mark.side_effect
+def test_add_finding_chart():
+    # ESO validates that the chart is a valid jpeg. This is the smallest
+    # possible jpeg image I could find.
+    teeny_jpg = "/9j/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/yQALCAABAAEBAREA/8wABgAQEAX/2gAIAQEAAD8A0s8g/9k="
+    teeny_jpg_bytes = base64.b64decode(teeny_jpg)
+    facility = EsoFacility()
+    folder = facility.create_folder(
+        ESO_TUTORIAL_CONTAINER_ID, "AEONlib.test_add_finding_chart"
+    )
+    ob = facility.create_ob(folder, "AEONLIB.test_add_finding_chart.ob")
+    facility.add_finding_chart(ob, chart=BytesIO(teeny_jpg_bytes), name="test")
+    chart_names = facility.get_finding_chart_names(ob)
+    assert len(chart_names) == 1
+    facility.delete_finding_chart(ob, 1)
     facility.delete_ob(ob)
     # Need to refresh the container
     folder = facility.get_container(folder.container_id)

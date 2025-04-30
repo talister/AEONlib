@@ -1,5 +1,6 @@
 import logging
 import tempfile
+from typing import BinaryIO
 
 from aeonlib.conf import settings as default_settings
 from aeonlib.exceptions import ServiceNetworkError
@@ -274,3 +275,35 @@ class EsoFacility:
         except Exception as e:
             raise ESONetworkError("Failed to delete ESO ephemeris file") from e
         logger.debug("<- %s", version)
+
+    def add_finding_chart(self, ob: ObservationBlock, chart: BinaryIO, name="") -> None:
+        """Add a finding chart and return a list of all charts"""
+        prefix = "aeon_fc"
+        if name:
+            prefix += f"_{name}_"
+        with tempfile.NamedTemporaryFile(delete=False, prefix=prefix) as temp_file:
+            temp_file.write(chart.read())
+            temp_file.flush()
+            logger.debug("Saved finding chart to %s", temp_file.name)
+            try:
+                self.api.addFindingChart(ob.ob_id, temp_file.name)
+            except Exception as e:
+                raise ESONetworkError("Failed to add ESO finding chart") from e
+
+    def get_finding_chart_names(self, ob: ObservationBlock) -> list[str]:
+        """Get a list of all finding chart names"""
+        try:
+            names, _ = self.api.getFindingChartNames(ob.ob_id)
+            assert names
+        except Exception as e:
+            raise ESONetworkError("Failed to get finding chart names") from e
+        logger.debug("<- %s", names)
+
+        return names
+
+    def delete_finding_chart(self, ob: ObservationBlock, index: int) -> None:
+        """Delete a finding chart from the ESO api."""
+        try:
+            self.api.deleteFindingChart(ob.ob_id, index)
+        except Exception as e:
+            raise ESONetworkError("Failed to delete ESO finding chart") from e
