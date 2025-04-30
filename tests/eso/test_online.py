@@ -242,3 +242,55 @@ def test_add_finding_chart():
     # Need to refresh the container
     folder = facility.get_container(folder.container_id)
     facility.delete_container(folder)
+
+
+@pytest.mark.side_effect
+def test_verify_ob():
+    facility = EsoFacility()
+    folder = facility.create_folder(ESO_TUTORIAL_CONTAINER_ID, "AEONlib.test_verify_ob")
+
+    # Fill out observation block
+    ob = facility.create_ob(folder, "AEONLIB.test_verify_ob.ob")
+    ob.target.name = "M32"
+    ob.target.ra = "00:42:41.825"
+    ob.target.dec = "-60:51:54.610"
+    ob.target.proper_motion_ra = 1
+    ob.target.proper_motion_dec = 2
+    ob.constraints.name = "My hardest constraints ever"
+    ob.constraints.airmass = 1.3
+    ob.constraints.sky_transparency = "Variable, thin cirrus"
+    ob.constraints.fli = 0.1
+    ob.constraints.seeing = 2.0
+    facility.save_ob(ob)
+
+    # Add some instrument templates
+    acq_template = facility.create_template(ob, "UVES_blue_acq_slit")
+    sci_template = facility.create_template(ob, "UVES_blue_obs_exp")
+
+    # Save time window
+    time_constraints = AbsoluteTimeConstraints(
+        constraints=[
+            AbsoluteTimeConstraint(
+                start=datetime.now() + timedelta(days=1),
+                end=datetime.now() + timedelta(days=30),
+            )
+        ]
+    )
+    facility.save_absolute_time_constraints(ob, time_constraints)
+
+    # Send it
+    errors, success = facility.verify(ob, False)
+    ob = facility.get_ob(ob.ob_id)
+    assert errors == []
+    assert success
+    assert ob.ob_status == "P"
+
+    # Clean up (would not do this outside of tests)
+    facility.delete_template(ob, acq_template)
+    ob = facility.get_ob(ob.ob_id)
+    facility.delete_template(ob, sci_template)
+    ob = facility.get_ob(ob.ob_id)
+    facility.delete_ob(ob)
+    # Need to refresh the container
+    folder = facility.get_container(folder.container_id)
+    facility.delete_container(folder)

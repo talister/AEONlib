@@ -307,3 +307,22 @@ class EsoFacility:
             self.api.deleteFindingChart(ob.ob_id, index)
         except Exception as e:
             raise ESONetworkError("Failed to delete ESO finding chart") from e
+
+    def verify(self, ob: ObservationBlock, submit: bool) -> tuple[list[str], bool]:
+        """Verify an observation block is observable.
+        Parameters:
+            ob (ObservationBlock): The observation block to verify.
+            submit (bool): Whether to change the status of the block to defined or executable.
+        Returns:
+            tuple[list[str], bool]: A tuple of error messages and success indicator.
+        """
+        try:
+            response, _ = self.api.verifyOB(ob.ob_id, submit)
+            assert response
+        except Exception as e:
+            raise ESONetworkError("Failed to verify ESO observation block") from e
+        logger.debug("<- %s", response)
+        if response.get("observable"):
+            return [], True
+        else:
+            return response.get("messages", []), False
