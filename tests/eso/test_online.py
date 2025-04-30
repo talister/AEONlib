@@ -6,6 +6,7 @@ from aeonlib.eso.facility import EsoFacility
 from aeonlib.eso.models import (
     AbsoluteTimeConstraint,
     AbsoluteTimeConstraints,
+    Ephemeris,
     SiderealTimeConstraint,
     SiderealTimeConstraints,
 )
@@ -167,6 +168,53 @@ def test_save_sidereal_time_constraints():
         new_sidereal_constraints.constraints[0].end
         == sidereal_constraints.constraints[0].end
     )
+    facility.delete_ob(ob)
+    # Need to refresh the container
+    folder = facility.get_container(folder.container_id)
+    facility.delete_container(folder)
+
+
+@pytest.mark.skip(reason="Errors with 'Ephemeris file must have at least two records.'")
+@pytest.mark.side_effect
+def test_save_ephemeris():
+    ephemeris_text = """    PAF.HDR.START,            # Start of PAF Header
+    PAF.TYPE                  "Instrument Setup", # Type of PAF
+    PAF.ID                    "", # ID for PAF
+    PAF.NAME                  "{PAFNAME}",# Name of PAF
+    PAF.DESC                  "Ephemeris / Eproc-4.3, 2025-04-30 20:54:26, IMCCE/OBSPM/CNRS"
+    PAF.DESC                  "Target body name: Ceres (1)"
+    PAF.DESC                  "Center body name: Earth {source: INPOP}"
+    PAF.DESC                  "Center-site name: Cerro Paranal"
+    PAF.DESC                  "Start time      : A.D. 2025-Apr-30 00:00:00.0000 UT"
+    PAF.DESC                  "Stop  time      : A.D. 2025-May-03 00:00:00.0000 UT"
+    PAF.DESC                  "Step-size       : 1.0  hours"
+    PAF.DESC                  "Target pole/equ : IAU {East-longitude -}"
+    PAF.DESC                  "Target radii    : 424.20 x 424.20 x 424.20 km {Equator, meridian, pole}"
+    PAF.DESC                  "Atmos refraction: NO (AIRLESS)"
+    PAF.CRTE.NAME             "Eproc.ephemcc", # Name of creator
+    PAF.HDR.END,              # End of PAF Header
+    # Ephem cuts: AM = 2.60, Sun elevation = 0.00 deg.
+    #------------------------------------------------------------------------------
+    #                              Date & Time (UT)             JD              RA (J2000)     Dec (J2000)    dRA ("/s)   dDEC ("/s)   V-mag  Slit PA
+    #------------------------------------------------------------------------------
+    INS.EPHEM.RECORD          "2025-04-30T10:00:00.000, 60795.41666666666, 23 52 34.5819, -10 14 26.580, 0.01342419, 0.00461927, 9.2919, 0.000, *"
+    INS.EPHEM.RECORD          "2025-04-30T11:00:00.000, 60795.45833333334, 23 52 37.8514, -10 14 09.945, 0.01338837, 0.00462241, 9.2919, 0.000, *"
+    #------------------------------------------------------------------------------
+    INS.EPHEM.RECORD          "2025-05-01T10:00:00.000, 60796.41666666666, 23 53 53.4767, -10 07 46.780, 0.01337469, 0.00458595, 9.2913, 0.000, *"
+    INS.EPHEM.RECORD          "2025-05-01T11:00:00.000, 60796.45833333334, 23 53 56.7330, -10 07 30.265, 0.01333904, 0.00458910, 9.2913, 0.000, *"
+    #------------------------------------------------------------------------------
+    INS.EPHEM.RECORD          "2025-05-02T10:00:00.000, 60797.41666666666, 23 55 12.0632, -10 01 09.917, 0.01332444, 0.00455202, 9.2906, 0.000, *"
+    INS.EPHEM.RECORD          "2025-05-02T11:00:00.000, 60797.45833333334, 23 55 15.3062, -10 00 53.524, 0.01328897, 0.00455516, 9.2905, 0.000, *"
+    #------------------------------------------------------------------------------"""
+    facility = EsoFacility()
+    folder = facility.create_folder(
+        ESO_TUTORIAL_CONTAINER_ID, "AEONlib.test_save_ephemeris"
+    )
+    ob = facility.create_ob(folder, "AEONLIB.test_save_ephemeris.ob")
+    ephemeris = Ephemeris(text=ephemeris_text)
+    new_ephemeris = facility.save_ephemeris(ob, ephemeris)
+    assert new_ephemeris.text == ephemeris.text
+    facility.delete_ephemeris(ob, new_ephemeris)
     facility.delete_ob(ob)
     # Need to refresh the container
     folder = facility.get_container(folder.container_id)

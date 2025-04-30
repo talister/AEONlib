@@ -102,3 +102,8 @@ class SiderealTimeConstraint(EsoModel):
 class SiderealTimeConstraints(EsoModel):
     constraints: list[SiderealTimeConstraint]
     version: str | None = None
+
+
+class Ephemeris(EsoModel):
+    text: str
+    version: str | None = None

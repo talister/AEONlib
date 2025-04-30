@@ -1,4 +1,5 @@
 import logging
+import tempfile
 
 from aeonlib.conf import settings as default_settings
 from aeonlib.exceptions import ServiceNetworkError
@@ -6,6 +7,7 @@ from aeonlib.exceptions import ServiceNetworkError
 from .models import (
     AbsoluteTimeConstraints,
     Container,
+    Ephemeris,
     ObservationBlock,
     SiderealTimeConstraints,
     Template,
@@ -228,3 +230,47 @@ class EsoFacility:
         return SiderealTimeConstraints.model_validate(
             {"constraints": new_constraints, "version": version}
         )
+
+    def get_ephemeris(self, ob: ObservationBlock) -> Ephemeris:
+        """The ESO api saves the file to the current working directory. We
+        use a temporary file here and return an object with the containing text.
+        """
+        with tempfile.NamedTemporaryFile() as temp_file:
+            try:
+                _, version = self.api.getEphemerisFile(ob.ob_id, temp_file.name)
+                assert version
+            except Exception as e:
+                raise ESONetworkError("Failed to get ESO ephemeris file") from e
+            logger.debug("<- %s", version)
+
+            return Ephemeris(text=temp_file.read().decode(), version=version)
+
+    def save_ephemeris(self, ob: ObservationBlock, ephemeris: Ephemeris):
+        """Save an ephemeris file to the ESO api."""
+        if not ephemeris.version:
+            # This is a new ephemeris file so we need to request a version
+            ephemeris.version = self.get_ephemeris(ob).version
+        with tempfile.NamedTemporaryFile() as temp_file:
+            temp_file.write(ephemeris.text.encode())
+            temp_file.flush()
+            logger.debug("Saved ephemeris file to %s", temp_file.name)
+            try:
+                _, version = self.api.saveEphemerisFile(
+                    ob.ob_id, temp_file.name, ephemeris.version
+                )
+                assert version
+            except Exception as e:
+                raise ESONetworkError("Failed to save ESO ephemeris file") from e
+            logger.debug("<- %s", version)
+
+            return Ephemeris(text=temp_file.read().decode(), version=version)
+
+    def delete_ephemeris(self, ob: ObservationBlock, ephemeris: Ephemeris) -> None:
+        """Delete an ephemeris file from the ESO api.
+        Note that the epemeris text does not need to be populated here, we
+        only need the version."""
+        try:
+            _, version = self.api.deleteEphemerisFile(ob.ob_id, ephemeris.version)
+        except Exception as e:
+            raise ESONetworkError("Failed to delete ESO ephemeris file") from e
+        logger.debug("<- %s", version)
