@@ -38,6 +38,7 @@ def test_valid_requests(facility: LcoFacility, request_group: RequestGroup):
     assert valid
 
 
+@pytest.mark.side_effect
 def test_submit_request(facility: LcoFacility):
     request_group_in = LCO_REQUESTS["lco_1m0_scicam_sinistro"]
     request_group_out = facility.submit_request_group(request_group_in)

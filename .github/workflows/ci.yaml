@@ -39,7 +39,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install the project
-        run: uv sync --dev
+        run: uv sync --dev --group eso
 
       - name: Run tests
         run: uv run pytest

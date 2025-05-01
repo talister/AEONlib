@@ -6,7 +6,7 @@ A suite of modules to enable TDA/MMA observations
 
 [issues](https://github.com/AEONplus/AEONlib/issues)
 
-### Configuration
+# Configuration
 Many of the facilities and services accessed by AEONlib require specific configuration such
 as api keys, urls, etc. All configuration can be supplied by either supplying a .env file or
 setting environmental variables in the execution environment.
@@ -34,26 +34,45 @@ Environmental variables take precedence over .env files. See the
 for more details.
 
 
-### Testing
+# Testing
 This project uses [pytest](https://docs.pytest.org/) to run tests:
 
-```shell
+```bash
 pytest
 ```
 
 Some tests are marked as `online`. These tests make real http requests in order
 to test interfaces with various services. To run them:
 
-```shell
+```bash
 pytest -m online
+```
+
+A subset of `online` tests are marked as `side_effect`. These are tests that change data on remote
+systems. For example, a test might be testing creating new observation requests, or updating the
+status of one. You might want to disable these:
+
+```bash
+pytest -m "not side_effect"
 ```
 
 CI does not run tests marked as online.
 
-### Linting
+## Viewing logs during tests
+Aeonlib turns on the Pytest
+[Live Logging](https://docs.pytest.org/en/stable/how-to/logging.html#live-logs) feature.
+By default any logging calls with a level above `WARNING` will be displayed to the console
+during the test run. It may be helpful to display debug logging, especially if debugging remote
+facilities or services:
+
+```bash
+pytest -m online --log-cli-level=debug
+```
+
+# Linting
 All code is formatted via [ruff](https://astral.sh/ruff).
 
-### Code Generation
+# Code Generation
 Las Cumbres Observatory [instrument classes](src/aeonlib/ocs/lco/instruments.py)
 are generated via the [generator.py](codegen/lco/generator.py) script. This script
 takes as input the [OCS instruments api](https://observe.lco.global/api/instruments/)
@@ -62,7 +81,7 @@ in order to produce definitions of all instruments currently available on the ne
 To update the definitions, first make sure you have installed the `codegen` dependency
 group:
 
-```shell
+```bash
 uv sync --group codegen  # or poetry install --with codegen
 ```
 
@@ -70,19 +89,71 @@ This ensures regular users of the library do not need to install these dependenc
 
 The `generate.py` script takes as input JSON as produced by the instruments endpoint:
 
-```shell
+```bash
 codegen/lco/generator.py instruments.json
 ```
 
 Or directly from stdin using a pipe:
 
-```shell
+```bash
 curl https://observe.lco.global/api/instruments/ | codegen/lco/generator.py
 ```
 
 If the output looks satisfactory, you can redirect the output to overwrite the
 LCO instruments definition file:
 
-```shell
+```bash
 curl https://observe.lco.global/api/instruments/ | codegen/lco/generator.py > src/aeonlib/ocs/lco/instruments.py
 ```
+# Supported Facilities
+
+This list is a work in progress.
+
+## OCS (Las Cumbres Observatory)
+
+Full documentation: TODO
+
+
+### Dependency group
+The OCS requires no additional dependency groups to be installed.
+
+### Configuration Values
+See [configuration](#configuration) for instructions on setting these values.
+
+For LCO:
+
+```python
+lco_token: str = ""
+lco_api_root: str = "https://observe.lco.global/api/"
+```
+### Helpful links
+
+* [LCO Observation Portal](https://observe.lco.global/)
+* [LCO Developer Documentation](https://developers.lco.global/)
+* [OCS API Documentation](https://observatorycontrolsystem.github.io/api/observation_portal/)
+
+## ESO (European Southern Observatory)
+
+Full documentation: TODO
+
+### Dependency Group
+To use the ESO facility, you must install the `eso` group:
+```bash
+pip install aeonlib[eso]
+uv sync --group eso
+poetry install --with eso
+```
+
+### Configuration Values
+See [configuration](#configuration) for instructions on setting these values.
+
+```python
+eso_environment: str = "demo"
+eso_username: str = ""
+eso_password: str = ""
+```
+
+### Helpul links
+
+* [ESO Phase 2 API](https://www.eso.org/sci/observing/phase2/p2intro/Phase2API.html)
+* [ESO Phase 2 Demo Application](https://www.eso.org/p2demo/home)

@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 
+from aeonlib.models import Window
 from aeonlib.ocs import (
     Constraints,
     Location,
     Request,
     RequestGroup,
     SiderealTarget,
-    Window,
 )
 from aeonlib.ocs.lco.instruments import (
     Lco1M0ScicamSinistro,
