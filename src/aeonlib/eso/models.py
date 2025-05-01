@@ -1,10 +1,11 @@
 from datetime import datetime, time
 from typing import Any, Self
 
+from astropy.coordinates import Angle
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 
-from aeonlib.models import Window
+from aeonlib.models import SiderealTarget, Window
 
 
 class EsoModel(BaseModel):
@@ -40,6 +41,20 @@ class Target(EsoModel):
     proper_motion_dec: float
     proper_motion_ra: float
     ra: str
+
+    def use_sidereal_target(self, st: SiderealTarget) -> None:
+        """Fills in the target fields of an observation block
+        using an general Aeonlib SiderealTarget object
+        """
+        # Format angles the way ESO wants them.
+        assert isinstance(st.ra, Angle)
+        assert isinstance(st.dec, Angle)
+        self.ra = st.ra.to_string(sep=":", precision=3)
+        self.dec = st.dec.to_string(sep=":", precision=3)
+        self.epoch = st.epoch
+        self.name = st.name
+        self.proper_motion_dec = st.proper_motion_dec
+        self.proper_motion_ra = st.proper_motion_ra
 
 
 class ObservationBlock(EsoModel):
