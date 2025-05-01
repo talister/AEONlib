@@ -97,13 +97,19 @@ class TestAstropyAngle:
         """Test angles constructed from astropy Angle objects dump to json as strings"""
         t = Target(ra=Angle(10, unit="deg"), dec=Angle(20, unit="deg"))
         dumped = t.model_dump_json()
-        assert dumped == '{"ra":"10d00m00s","dec":"20d00m00s"}'
+        assert dumped == '{"ra":"10","dec":"20"}'
 
     def test_from_str(self):
         """Test angles constructed from strings dump to json as formatted strings"""
         t = Target(ra="1h2m3s", dec="2d")
         dumped = t.model_dump_json()
-        assert dumped == '{"ra":"1h02m03s","dec":"2d00m00s"}'
+        assert dumped == '{"ra":"1.03417","dec":"2"}'
+
+    def test_from_float(self):
+        """Test angles constructed from floats dump to json as formatted strings"""
+        t = Target(ra=10, dec=20)
+        dumped = t.model_dump_json()
+        assert dumped == '{"ra":"10","dec":"20"}'
 
     def test_angle_attributes(self):
         """Test angles are accessible on the model"""
@@ -126,3 +132,17 @@ class TestAstropyAngle:
         assert target.ra.hour == 1
         assert isinstance(target.dec, Angle)
         assert target.dec.degree == 2
+
+    def test_from_json_float(self):
+        """Test models can be constructed from json with float values"""
+        target_json = json.dumps(
+            {
+                "ra": 10.0,
+                "dec": 20.0,
+            }
+        )
+        target = Target.model_validate_json(target_json)
+        assert isinstance(target.ra, Angle)
+        assert target.ra.degree == 10
+        assert isinstance(target.dec, Angle)
+        assert target.dec.degree == 20

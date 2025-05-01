@@ -11,7 +11,7 @@ from pydantic.types import (
     StringConstraints,
 )
 
-from aeonlib.types import Time
+from aeonlib.types import Angle, Time
 
 
 class SiderealTarget(BaseModel):
@@ -22,9 +22,9 @@ class SiderealTarget(BaseModel):
     """The type of this Target"""
     hour_angle: Annotated[float, Ge(-180), Le(180)] | None = None
     """Hour angle of this Target in decimal degrees"""
-    ra: Annotated[float, NonNegativeFloat, Le(360.0)]
+    ra: Angle
     """Right ascension in decimal degrees"""
-    dec: Annotated[float, Ge(-90), Le(90)]
+    dec: Angle
     """Declination in decimal degrees"""
     altitude: Annotated[float, NonNegativeFloat, Le(90)] | None = None
     """Altitude of this Target in decimal degrees"""
