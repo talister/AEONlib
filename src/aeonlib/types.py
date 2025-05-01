@@ -1,6 +1,7 @@
 from datetime import datetime
-from typing import Annotated, Any, Type
+from typing import Annotated, Any, Type, Union
 
+import astropy.coordinates
 import astropy.time
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
@@ -64,4 +65,54 @@ class _AstropyTimeType:
         return handler(core_schema.datetime_schema())
 
 
-Time = Annotated[astropy.time.Time, _AstropyTimeType]
+class _AstropyAngleType:
+    """
+    Custom Pydantic type that handles astropy.time.Time serialization and parsing.
+    This should enable using astropy Time objects as pydantic fields that are interoperable
+    with datetime objects.
+    """
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls,
+        _source_type: Type[Any],
+        _handler: GetCoreSchemaHandler,
+    ) -> core_schema.CoreSchema:
+        """https://docs.pydantic.dev/latest/concepts/types/#handling-third-party-types"""
+
+        def validate_from_str(angle_value: str) -> astropy.coordinates.Angle:
+            return astropy.coordinates.Angle(angle_value)
+
+        from_str_schema = core_schema.chain_schema(
+            [
+                core_schema.str_schema(),
+                core_schema.no_info_plain_validator_function(validate_from_str),
+            ]
+        )
+
+        def serialize_angle(angle_obj: astropy.coordinates.Angle) -> str:
+            return angle_obj.to_string()  # type: ignore
+
+        return core_schema.json_or_python_schema(
+            json_schema=from_str_schema,
+            python_schema=core_schema.union_schema(
+                [
+                    core_schema.is_instance_schema(astropy.coordinates.Angle),
+                    from_str_schema,
+                ]
+            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                serialize_angle
+            ),
+        )
+
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls, _core_schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        # Use the same schema that would be used for `str`
+        return handler(core_schema.str_schema())
+
+
+Time = Annotated[Union[astropy.time.Time, datetime], _AstropyTimeType]
+Angle = Annotated[Union[astropy.coordinates.Angle, str], _AstropyAngleType]
