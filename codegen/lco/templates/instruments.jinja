@@ -4,7 +4,8 @@ from annotated_types import Le
 from pydantic import BaseModel, ConfigDict
 from pydantic.types import NonNegativeInt, PositiveInt
 
-from aeonlib.ocs.target_models import Constraints, SiderealTarget, NonSiderealTarget
+from aeonlib.models import SiderealTarget, NonSiderealTarget
+from aeonlib.ocs.target_models import Constraints
 from aeonlib.ocs.config_models import Roi
 
 
