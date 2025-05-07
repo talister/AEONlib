@@ -20,15 +20,15 @@ class SiderealTarget(BaseModel):
     """The name of this Target"""
     type: Literal["ICRS", "HOUR_ANGLE", "ALTAZ"]
     """The type of this Target"""
-    hour_angle: Annotated[float, Ge(-180), Le(180)] | None = None
+    hour_angle: Angle | None = None
     """Hour angle of this Target in decimal degrees"""
     ra: Angle
     """Right ascension in decimal degrees"""
     dec: Angle
     """Declination in decimal degrees"""
-    altitude: Annotated[float, NonNegativeFloat, Le(90)] | None = None
+    altitude: Angle | None = None
     """Altitude of this Target in decimal degrees"""
-    azimuth: Annotated[float, NonNegativeFloat, Le(360)] | None = None
+    azimuth: Angle | None = None
     """Azimuth of this Target in decimal degrees east of North"""
     proper_motion_ra: Annotated[float, Le(20000.0)] = 0
     """Right ascension proper motion of the Target in mas/year. Defaults to 0."""
@@ -58,17 +58,17 @@ class NonSiderealTarget(BaseModel):
     """The Target scheme to use"""
     epochofel: Annotated[float, Ge(10_000), Le(100_000)]
     """The epoch of the orbital elements (MJD)"""
-    orbinc: Annotated[float, NonNegativeFloat, Le(180.0)]
+    orbinc: Angle
     """Orbital inclination (angle in degrees)"""
-    longascnode: Annotated[float, NonNegativeFloat, Le(360.0)]
+    longascnode: Angle
     """Longitude of ascending node (angle in degrees)"""
-    argofperih: Annotated[float, NonNegativeFloat, Le(360.0)]
+    argofperih: Angle
     """Argument of perihelion (angle in degrees)"""
     eccentricity: NonNegativeFloat
     """Eccentricity of the orbit"""
     meandist: Annotated[float, NonNegativeFloat]
     """Semi-major axis (AU)"""  # Not Comet
-    meananom: Annotated[float, NonNegativeFloat, Le(360.0)]
+    meananom: Angle
     """Mean anomaly (angle in degrees)"""
     perihdist: Annotated[float, NonNegativeFloat] | None = None
     """Perihelion distance (AU)"""  # Comet Only
@@ -76,9 +76,9 @@ class NonSiderealTarget(BaseModel):
     """Epoch of perihelion (MJD)"""  # Comet Only
     dailymot: float | None = None
     """Daily motion (angle in degrees)"""  # Major Planet Only
-    altitude: Annotated[float, NonNegativeFloat, Le(90)] | None = None
+    altitude: Angle | None = None
     """Altitude of this Target in decimal degrees"""  # Satellite Only
-    azimuth: Annotated[float, NonNegativeFloat, Le(360)] | None = None
+    azimuth: Angle | None = None
     """Azimuth of this Target in decimal degrees east of North"""  # Satellite Only
     diff_altitude_rate: float | None = None
     """Differential altitude rate (arcsec/s)"""  # Satellite Only
@@ -90,9 +90,9 @@ class NonSiderealTarget(BaseModel):
     """Differential altitude acceleration (arcsec/s^2)"""  # Satellite Only
     diff_azimuth_acceleration: float | None = None
     """Differential azimuth acceleration (arcsec/s^2)"""  # Satellite Only
-    meanlong: float | None = None
+    meanlong: Angle | None = None
     """Mean longitude (angle in degrees)"""  # No idea what this is.
-    longofperih: Annotated[float, NonNegativeFloat, Le(360.0)] | None = None
+    longofperih: Angle | None = None
     """Longitude of perihelion (angle in degrees)"""  # No idea what this is.
     extra_params: dict[Any, Any] = {}
 
