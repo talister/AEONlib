@@ -13,6 +13,18 @@ from aeonlib.ocs.lco.instruments import (
     Lco2M0ScicamMuscat,
 )
 
+target = SiderealTarget(
+    name="M10",
+    type="ICRS",
+    ra=254.287,
+    dec=-4.72,
+)
+
+window = Window(
+    start=datetime.now(),
+    end=datetime.now() + timedelta(days=60),
+)
+
 lco_1m0_scicam_sinistro = RequestGroup(
     name="test",
     observation_type="NORMAL",
@@ -25,10 +37,8 @@ lco_1m0_scicam_sinistro = RequestGroup(
             configurations=[
                 Lco1M0ScicamSinistro(
                     type="EXPOSE",
-                    target=SiderealTarget(
-                        name="M51", type="ICRS", ra=202.469, dec=47.195
-                    ),
-                    constraints=Constraints(),
+                    target=target,
+                    constraints=Constraints(max_airmass=3.0),
                     instrument_configs=[
                         Lco1M0ScicamSinistro.config_class(
                             exposure_count=1,
@@ -47,12 +57,7 @@ lco_1m0_scicam_sinistro = RequestGroup(
                     ),
                 )
             ],
-            windows=[
-                Window(
-                    start=datetime.now(),
-                    end=datetime.now() + timedelta(days=30),
-                )
-            ],
+            windows=[window],
         )
     ],
 )
@@ -69,10 +74,8 @@ lco_2m0_floyds_scicam = RequestGroup(
             configurations=[
                 Lco2M0FloydsScicam(
                     type="SPECTRUM",
-                    target=SiderealTarget(
-                        name="M51", type="ICRS", ra=202.469, dec=47.195
-                    ),
-                    constraints=Constraints(),
+                    target=target,
+                    constraints=Constraints(max_airmass=3.0),
                     instrument_configs=[
                         Lco2M0FloydsScicam.config_class(
                             rotator_mode="VFLOAT",
@@ -92,12 +95,7 @@ lco_2m0_floyds_scicam = RequestGroup(
                     ),
                 )
             ],
-            windows=[
-                Window(
-                    start=datetime.now(),
-                    end=datetime.now() + timedelta(days=30),
-                )
-            ],
+            windows=[window],
         )
     ],
 )
@@ -114,10 +112,8 @@ lco_2m0_scicam_muscat = RequestGroup(
             configurations=[
                 Lco2M0ScicamMuscat(
                     type="EXPOSE",
-                    target=SiderealTarget(
-                        name="M51", type="ICRS", ra=202.469, dec=47.195
-                    ),
-                    constraints=Constraints(),
+                    target=target,
+                    constraints=Constraints(max_airmass=3.0),
                     instrument_configs=[
                         Lco2M0ScicamMuscat.config_class(
                             exposure_count=1,
@@ -145,12 +141,7 @@ lco_2m0_scicam_muscat = RequestGroup(
                     ),
                 )
             ],
-            windows=[
-                Window(
-                    start=datetime.now(),
-                    end=datetime.now() + timedelta(days=30),
-                )
-            ],
+            windows=[window],
         )
     ],
 )
