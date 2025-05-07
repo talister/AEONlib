@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+from astropy.coordinates import Angle
 from astropy.time import Time
 from pydantic import BaseModel
 
@@ -13,8 +14,8 @@ class Window(BaseModel):
     used for testing the custom time type
     """
 
-    start: aeonlib.types.Time | datetime | None = None
-    end: aeonlib.types.Time | datetime
+    start: aeonlib.types.Time | None = None
+    end: aeonlib.types.Time
 
 
 class TestAstropyTime:
@@ -80,3 +81,68 @@ class TestAstropyTime:
         assert window.start == Time(datetime(2025, 4, 10, 0, 0, 0, 0))
         assert isinstance(window.end, Time)
         assert window.end == Time(datetime(2025, 4, 11, 0, 0, 0, 0))
+
+
+class Target(BaseModel):
+    """
+    Test model for testing custom angle type
+    """
+
+    ra: aeonlib.types.Angle
+    dec: aeonlib.types.Angle
+
+
+class TestAstropyAngle:
+    def test_from_angle(self):
+        """Test angles constructed from astropy Angle objects dump to json as strings"""
+        t = Target(ra=Angle(10, unit="deg"), dec=Angle(20, unit="deg"))
+        dumped = t.model_dump_json()
+        assert dumped == '{"ra":"10","dec":"20"}'
+
+    def test_from_str(self):
+        """Test angles constructed from strings dump to json as formatted strings"""
+        t = Target(ra="1h2m3s", dec="2d")
+        dumped = t.model_dump_json()
+        assert dumped == '{"ra":"1.03417","dec":"2"}'
+
+    def test_from_float(self):
+        """Test angles constructed from floats dump to json as formatted strings"""
+        t = Target(ra=10, dec=20)
+        dumped = t.model_dump_json()
+        assert dumped == '{"ra":"10","dec":"20"}'
+
+    def test_angle_attributes(self):
+        """Test angles are accessible on the model"""
+        t = Target(ra="1h", dec="2d")
+        assert isinstance(t.ra, Angle)
+        assert t.ra.hour == 1
+        assert isinstance(t.dec, Angle)
+        assert t.dec.degree == 2
+
+    def test_from_json(self):
+        """Test models can be constructed from json"""
+        target_json = json.dumps(
+            {
+                "ra": "1h",
+                "dec": "2d",
+            }
+        )
+        target = Target.model_validate_json(target_json)
+        assert isinstance(target.ra, Angle)
+        assert target.ra.hour == 1
+        assert isinstance(target.dec, Angle)
+        assert target.dec.degree == 2
+
+    def test_from_json_float(self):
+        """Test models can be constructed from json with float values"""
+        target_json = json.dumps(
+            {
+                "ra": 10.0,
+                "dec": 20.0,
+            }
+        )
+        target = Target.model_validate_json(target_json)
+        assert isinstance(target.ra, Angle)
+        assert target.ra.degree == 10
+        assert isinstance(target.dec, Angle)
+        assert target.dec.degree == 20

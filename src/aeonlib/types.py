@@ -1,6 +1,7 @@
 from datetime import datetime
-from typing import Annotated, Any, Type
+from typing import Annotated, Any, Type, Union
 
+import astropy.coordinates
 import astropy.time
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
@@ -64,4 +65,70 @@ class _AstropyTimeType:
         return handler(core_schema.datetime_schema())
 
 
-Time = Annotated[astropy.time.Time, _AstropyTimeType]
+class _AstropyAngleType:
+    """
+    Cutsom pydantic type that handles Angle types. It should accept astropy.coordinates.Angle
+    objects, strings and floats during validation. Interanally the data will be stored
+    as an angle for maximum precision and flexibility. During serialization, the angle
+    will converted to a decimal degree representation by default.
+    """
+
+    @classmethod
+    def __get_pydantic_core_schema__(
+        cls,
+        _source_type: Type[Any],
+        _handler: GetCoreSchemaHandler,
+    ) -> core_schema.CoreSchema:
+        """https://docs.pydantic.dev/latest/concepts/types/#handling-third-party-types"""
+
+        def validate_from_str(angle_value: str) -> astropy.coordinates.Angle:
+            return astropy.coordinates.Angle(angle_value)
+
+        def validate_from_float(angle_value: float) -> astropy.coordinates.Angle:
+            return astropy.coordinates.Angle(angle_value, unit="deg")
+
+        str_schema = core_schema.chain_schema(
+            [
+                core_schema.str_schema(),
+                core_schema.no_info_plain_validator_function(validate_from_str),
+            ]
+        )
+
+        float_schema = core_schema.chain_schema(
+            [
+                core_schema.float_schema(),
+                core_schema.no_info_plain_validator_function(validate_from_float),
+            ]
+        )
+
+        def serialize_angle(angle_obj: astropy.coordinates.Angle) -> str:
+            return angle_obj.to_string(decimal=True)
+
+        return core_schema.json_or_python_schema(
+            json_schema=core_schema.union_schema([str_schema, float_schema]),
+            python_schema=core_schema.union_schema(
+                [
+                    core_schema.is_instance_schema(astropy.coordinates.Angle),
+                    str_schema,
+                    float_schema,
+                ]
+            ),
+            serialization=core_schema.plain_serializer_function_ser_schema(
+                serialize_angle
+            ),
+        )
+
+    @classmethod
+    def __get_pydantic_json_schema__(
+        cls, _core_schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
+    ) -> JsonSchemaValue:
+        return {
+            "anyOf": [
+                handler(core_schema.str_schema()),
+                handler(core_schema.float_schema()),
+            ]
+        }
+
+
+Time = Annotated[Union[astropy.time.Time, datetime], _AstropyTimeType]
+Angle = Annotated[Union[astropy.coordinates.Angle, str, float], _AstropyAngleType]

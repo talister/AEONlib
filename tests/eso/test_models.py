@@ -1,10 +1,11 @@
 from datetime import datetime
 
 import pytest
+from astropy.coordinates.earth import Angle
 from astropy.time import Time
 
-from aeonlib.eso.models import AbsoluteTimeConstraint
-from aeonlib.models import Window
+from aeonlib.eso.models import AbsoluteTimeConstraint, Target
+from aeonlib.models import SiderealTarget, Window
 
 
 def test_constraints_from_window():
@@ -24,3 +25,30 @@ def test_constraints_from_window_must_enter_start():
         AbsoluteTimeConstraint.from_window(
             Window(start=None, end=Time(60776.0, scale="utc", format="mjd"))
         )
+
+
+def test_eso_target_from_sidereal_target():
+    sidereal_target = SiderealTarget(
+        name="Test Target",
+        ra=Angle(24.5, unit="deg"),
+        dec=Angle(12.5, unit="deg"),
+        type="ICRS",
+    )
+
+    eso_target = Target(
+        dec="00:00:00.000",
+        differential_dec=0.0,
+        differential_ra=0.0,
+        epoch=2000.0,
+        equinox="J2000",
+        name="No name",
+        proper_motion_dec=0.0,
+        proper_motion_ra=0.0,
+        ra="00:00:00.000",
+    )
+
+    eso_target.use_sidereal_target(sidereal_target)
+
+    assert eso_target.name == "Test Target"
+    assert eso_target.ra == "24:30:00.000"
+    assert eso_target.dec == "12:30:00.000"
