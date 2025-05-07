@@ -33,3 +33,6 @@ markers = [
 ]
 log_cli = true
 log_cli_format = "%(levelname)s [%(name)s %(filename)s:%(lineno)s %(funcName)s()] %(message)s"
+
+[tool.ruff.lint]
+exclude = ["*.ipynb"]
