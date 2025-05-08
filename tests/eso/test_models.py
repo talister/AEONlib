@@ -14,7 +14,7 @@ def test_constraints_from_window():
         end=Time(60776.0, scale="utc", format="mjd"),
     )
 
-    abs_constraint = AbsoluteTimeConstraint.from_window(window)
+    abs_constraint = AbsoluteTimeConstraint.construct_from(window)
 
     assert abs_constraint.start == datetime(2025, 4, 10, 0, 0)
     assert abs_constraint.end == datetime(2025, 4, 11, 0, 0)
@@ -22,7 +22,7 @@ def test_constraints_from_window():
 
 def test_constraints_from_window_must_enter_start():
     with pytest.raises(ValueError):
-        AbsoluteTimeConstraint.from_window(
+        AbsoluteTimeConstraint.construct_from(
             Window(start=None, end=Time(60776.0, scale="utc", format="mjd"))
         )
 
@@ -47,7 +47,7 @@ def test_eso_target_from_sidereal_target():
         ra="00:00:00.000",
     )
 
-    eso_target.use_sidereal_target(sidereal_target)
+    eso_target.construct_from(sidereal_target)
 
     assert eso_target.name == "Test Target"
     assert eso_target.ra == "24:30:00.000"

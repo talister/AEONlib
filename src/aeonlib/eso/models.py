@@ -42,7 +42,7 @@ class Target(EsoModel):
     proper_motion_ra: float
     ra: str
 
-    def use_sidereal_target(self, st: SiderealTarget) -> None:
+    def construct_from(self, st: SiderealTarget) -> None:
         """Fills in the target fields of an observation block
         using an general Aeonlib SiderealTarget object
         """
@@ -105,7 +105,7 @@ class AbsoluteTimeConstraint(EsoModel):
     end: datetime = Field(..., serialization_alias="to", validation_alias="to")
 
     @classmethod
-    def from_window(cls, window: Window) -> Self:
+    def construct_from(cls, window: Window) -> Self:
         if not window.start:
             raise ValueError("ESO constraints require a valid start time")
         else:
