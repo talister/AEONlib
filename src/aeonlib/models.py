@@ -72,7 +72,7 @@ class NonSiderealTarget(BaseModel):
     """Mean anomaly (angle in degrees)"""
     perihdist: Annotated[float, NonNegativeFloat] | None = None
     """Perihelion distance (AU)"""  # Comet Only
-    epochofperih: Annotated[float, Le(240_000), Le(100_000)] | None = None
+    epochofperih: Annotated[float, Ge(10_000), Le(100_000)] | None = None
     """Epoch of perihelion (MJD)"""  # Comet Only
     dailymot: float | None = None
     """Daily motion (angle in degrees)"""  # Major Planet Only
