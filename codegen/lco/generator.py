@@ -39,10 +39,10 @@ def generate_instrument_configs(ins_s: str, soar: bool = False) -> str:
     instruments = []
     if soar:
         prefix = ""
-        filtered = {k: v for k, v in ins_data.items() if 'soar' in k.lower()}
+        filtered = {k: v for k, v in ins_data.items() if "soar" in k.lower()}
     else:
         prefix = "Lco"
-        filtered = {k: v for k, v in ins_data.items() if 'soar' not in k.lower()}
+        filtered = {k: v for k, v in ins_data.items() if "soar" not in k.lower()}
 
     # Instruments endpoint seems inconsistent, this should keep our output consistent
     ordered = dict(sorted(filtered.items()))
@@ -71,8 +71,7 @@ def generate_instrument_configs(ins_s: str, soar: bool = False) -> str:
 
 if __name__ == "__main__":
     try:
-        # soar = sys.argv[1] == 'soar'
-        soar = sys.argv.pop(1) == 'soar'
+        soar = sys.argv.pop(1) == "soar"
     except IndexError:
         soar = False
     # Accepts input from stdin or a file argument

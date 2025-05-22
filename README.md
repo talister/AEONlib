@@ -129,7 +129,7 @@ lco_api_root: str = "https://observe.lco.global/api/"
 
 ## SOAR
 
-SOAR is functionally the same as LCO, but has it's own set of instruments and be configured seperately.
+SOAR is functionally the same as LCO, but has its own set of instruments and can be configured seperately.
 
 ### Dependency group
 SOAR requires no additional dependency groups to be installed.
