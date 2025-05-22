@@ -91,9 +91,9 @@ class NonSiderealTarget(BaseModel):
     diff_azimuth_acceleration: float | None = None
     """Differential azimuth acceleration (arcsec/s^2)"""  # Satellite Only
     meanlong: Angle | None = None
-    """Mean longitude (angle in degrees)"""  # No idea what this is.
+    """Mean longitude (angle in degrees)"""  # Major Planet Only
     longofperih: Angle | None = None
-    """Longitude of perihelion (angle in degrees)"""  # No idea what this is.
+    """Longitude of perihelion (angle in degrees)"""  # Major Planet Only
     extra_params: dict[Any, Any] = {}
 
 
