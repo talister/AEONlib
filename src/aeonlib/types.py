@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from typing import Annotated, Any, Type, Union
 
@@ -6,6 +7,8 @@ import astropy.time
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import core_schema
+
+logger = logging.getLogger(__name__)
 
 
 class _AstropyTimeType:
@@ -47,8 +50,13 @@ class _AstropyTimeType:
             if field_name and context:
                 output_mapping = context.get("output_mapping", {})
                 output_type = output_mapping.get(field_name, "datetime")
-                if output_type == "mjd":
-                    return time_obj.mjd  # type: ignore
+                try:
+                    return getattr(time_obj, output_type)
+                except AttributeError:
+                    logger.exception(
+                        f"Invalid output type '{output_type}' for field '{field_name}'. "
+                        "Ensure output mapping is an attribute of astropy.time.Time.",
+                    )
 
             return time_obj.datetime  # type: ignore
 
