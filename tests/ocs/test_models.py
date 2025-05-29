@@ -1,15 +1,18 @@
 from datetime import datetime, timedelta
 
 import pytest
+from astropy.time import Time
 from pydantic import ValidationError
 
-from aeonlib.models import SiderealTarget, Window
+from aeonlib.conf import Settings
+from aeonlib.models import NonSiderealTarget, SiderealTarget, Window
 from aeonlib.ocs import (
     Constraints,
     Location,
     Request,
     RequestGroup,
 )
+from aeonlib.ocs.lco.facility import LcoFacility
 from aeonlib.ocs.lco.instruments import Lco1M0ScicamSinistro
 
 
@@ -118,3 +121,31 @@ class TestCommonValidationErrors:
             request.acceptability_threshold = 200
         assert exc_info.value.errors()[0]["loc"] == ("acceptability_threshold",)
         assert exc_info.value.errors()[0]["type"] == "less_than_equal"
+
+
+class TestSerialization:
+    def test_time_fields_serialized_as_mjd(self, request_group: RequestGroup):
+        """
+        Test that certain time fields on a RequestGroup are serialized as MJD.
+        This is likely specific to LCO/OCS so only the LCO Facility has this behavior.
+        """
+        facility = LcoFacility(settings=Settings(lco_token="", lco_api_root=""))
+        target = NonSiderealTarget(
+            name="mover",
+            type="ORBITAL_ELEMENTS",
+            scheme="JPL_MINOR_PLANET",
+            epochofel=datetime(2025, 1, 1),  # Time as datetime
+            orbinc=0.0,
+            longascnode=0.0,
+            argofperih=0.0,
+            eccentricity=1.0,
+            meandist=1.0,
+            meananom=0.0,
+            epochofperih=Time(2460676.5, format="jd", scale="tt"),  # Time as JD
+        )
+        request_group.requests[0].configurations[0].target = target
+        result = facility.serialize_request_group(request_group)
+        result_target = result["requests"][0]["configurations"][0]["target"]
+        # Assert that the resulting serialized values are in MJD
+        assert result_target["epochofel"] == 60676.0
+        assert result_target["epochofperih"] == 60676.0

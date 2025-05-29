@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from typing import Annotated, Any, Type, Union
 
@@ -6,6 +7,8 @@ import astropy.time
 from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core import core_schema
+
+logger = logging.getLogger(__name__)
 
 
 class _AstropyTimeType:
@@ -19,7 +22,7 @@ class _AstropyTimeType:
     def __get_pydantic_core_schema__(
         cls,
         _source_type: Type[Any],
-        _handler: GetCoreSchemaHandler,
+        handler: GetCoreSchemaHandler,
     ) -> core_schema.CoreSchema:
         """https://docs.pydantic.dev/latest/concepts/types/#handling-third-party-types"""
 
@@ -33,13 +36,28 @@ class _AstropyTimeType:
             ]
         )
 
-        def serialize_time(time_obj: astropy.time.Time) -> datetime:
+        def serialize_time(
+            model, time_obj: astropy.time.Time, info: core_schema.SerializationInfo
+        ) -> Union[datetime, str, float]:
             """
             Determines how to serialize an astropy.time.Time object when model_dump()
             is called. Potentially we could leave this as is and have astropy times
             in dictionaries, but Pydantic handles datetimes natively so this seems to
             be the path of least resistance.
             """
+            field_name = getattr(info, "field_name", "")
+            context = getattr(info, "context", {})
+            if field_name and context:
+                output_mapping = context.get("output_mapping", {})
+                output_type = output_mapping.get(field_name, "datetime")
+                try:
+                    return getattr(time_obj, output_type)
+                except AttributeError:
+                    logger.exception(
+                        f"Invalid output type '{output_type}' for field '{field_name}'. "
+                        "Ensure output mapping is an attribute of astropy.time.Time.",
+                    )
+
             return time_obj.datetime  # type: ignore
 
         return core_schema.json_or_python_schema(
@@ -53,7 +71,7 @@ class _AstropyTimeType:
                 ]
             ),
             serialization=core_schema.plain_serializer_function_ser_schema(
-                serialize_time
+                serialize_time, is_field_serializer=True, info_arg=True
             ),
         )
 

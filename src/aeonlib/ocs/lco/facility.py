@@ -34,12 +34,13 @@ class LcoFacility:
 
     def __init__(self, settings=default_settings):
         if not settings.lco_token:
-            logger.warn(
+            logger.info(
                 "AEON_LCO_TOKEN setting is missing, request will be unauthenticated"
             )
+            headers = {}
         else:
-            self.headers = {"Authorization": f"Token {settings.lco_token}"}
-        self.client = httpx.Client(base_url=settings.lco_api_root, headers=self.headers)
+            headers = {"Authorization": f"Token {settings.lco_token}"}
+        self.client = httpx.Client(base_url=settings.lco_api_root, headers=headers)
 
     def __del__(self):
         self.client.close()
@@ -57,10 +58,18 @@ class LcoFacility:
             fields = ["id", "active", "title", "requestgroup_count"]
             return dict_table(proposals, fields)
 
+    def serialize_request_group(self, request_group: RequestGroup) -> dict:
+        # The LCO api expects certain time fields to be in MJD format instead of datetime.
+        # The below mapping is accessed in the Time field to output to MJD.
+        output_mapping = {"epochofel": "mjd", "epochofperih": "mjd"}
+        return request_group.model_dump(
+            mode="json", exclude_none=True, context={"output_mapping": output_mapping}
+        )
+
     def validate_request_group(
         self, request_group: RequestGroup
     ) -> tuple[bool, list[Any]]:
-        payload = request_group.model_dump(mode="json", exclude_none=True)
+        payload = self.serialize_request_group(request_group)
         logger.debug("LcoFacility.validate_request_group -> %s", payload)
         response = self.client.post("/requestgroups/validate/", json=payload)
         response = response.json()
@@ -73,7 +82,7 @@ class LcoFacility:
     def submit_request_group(
         self, request_group: RequestGroup
     ) -> SubmittedRequestGroup:
-        payload = request_group.model_dump(mode="json", exclude_none=True)
+        payload = self.serialize_request_group(request_group)
         logger.debug("-> %s", payload)
         response = self.client.post("/requestgroups/", json=payload)
         response.raise_for_status()
