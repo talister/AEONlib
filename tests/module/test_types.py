@@ -107,9 +107,9 @@ class TestAstropyAngle:
 
     def test_from_float(self):
         """Test angles constructed from floats dump to json as formatted strings"""
-        t = Target(ra=10, dec=20)
+        t = Target(ra=10.5, dec=20)
         dumped = t.model_dump_json()
-        assert dumped == '{"ra":"10","dec":"20"}'
+        assert dumped == '{"ra":"10.5","dec":"20"}'
 
     def test_angle_attributes(self):
         """Test angles are accessible on the model"""
