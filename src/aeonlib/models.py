@@ -4,7 +4,7 @@ Models shared between facilities.
 
 from typing import Annotated, Any, Literal
 
-from annotated_types import Ge, Le
+from annotated_types import Le
 from pydantic import BaseModel, ConfigDict
 from pydantic.types import (
     NonNegativeFloat,
@@ -56,7 +56,7 @@ class NonSiderealTarget(BaseModel):
         "MPC_COMET",
     ]
     """The Target scheme to use"""
-    epochofel: Annotated[float, Ge(10_000), Le(100_000)]
+    epochofel: Time
     """The epoch of the orbital elements (MJD)"""
     orbinc: Angle
     """Orbital inclination (angle in degrees)"""
@@ -72,7 +72,7 @@ class NonSiderealTarget(BaseModel):
     """Mean anomaly (angle in degrees)"""
     perihdist: Annotated[float, NonNegativeFloat] | None = None
     """Perihelion distance (AU)"""  # Comet Only
-    epochofperih: Annotated[float, Ge(10_000), Le(100_000)] | None = None
+    epochofperih: Time | None = None
     """Epoch of perihelion (MJD)"""  # Comet Only
     dailymot: float | None = None
     """Daily motion (angle in degrees)"""  # Major Planet Only
